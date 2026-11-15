@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>日本語ノート — My Japanese Notebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="top-row"><h1>日本語ノート</h1><span class="ver-line">v0.2.1, released 2026-11-15</span></div>
+    <p class="prof-line">Language proficiency: N5</p>
+  </header>
+
+  <div class="tabs-wrap"><button class="tab-arrow" id="tabPrev" aria-label="Previous section">‹</button><nav class="tabs" id="tabs">
+    <button data-tab="vocab" class="active"><span class="jp">語彙</span>Vocabulary</button>
+    <button data-tab="phrase"><span class="jp">フレーズ</span>Phrases</button>
+    <button data-tab="grammar"><span class="jp">文法</span>Grammar</button>
+    <button data-tab="numbers"><span class="jp">数</span>Numbers</button>
+    <button data-tab="listening"><span class="jp">聴解</span>Listening</button>
+    <button data-tab="verbs"><span class="jp">活用</span>Verbs</button>
+    <button data-tab="particles"><span class="jp">助詞</span>Particles</button>
+    <button data-tab="flashcards"><span class="jp">カード</span>Flashcards</button>
+    <button data-tab="quiz"><span class="jp">クイズ</span>Quiz</button>
+  </nav><button class="tab-arrow" id="tabNext" aria-label="Next section">›</button></div>
+
+  <main id="content"></main>
+
+  <button class="fab" id="addFab" title="Add a new entry" aria-label="Add a new entry">+</button>
+
+  <footer class="app-footer">
+    <span id="totalCount"></span>
+    <button id="restoreBtn">Restore starter set</button>
+    <button id="resetEditsBtn">Undo my edits</button>
+    <button id="clearBtn">Clear all data</button>
+  </footer>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add an entry</h2>
+    <form id="addForm">
+      <div class="field">
+        <label for="f-category">Type</label>
+        <select id="f-category">
+          <option value="vocab">Vocabulary</option>
+          <option value="phrase">Phrase</option>
+          <option value="grammar">Grammar point</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-jp">Japanese</label>
+        <textarea id="f-jp" rows="2" placeholder="例：食べます（會話可以換行貼上）" required></textarea>
+      </div>
+      <div class="field">
+        <label for="f-reading">Reading / romaji</label>
+        <input id="f-reading" type="text" placeholder="たべます">
+      </div>
+      <div class="field">
+        <label for="f-meaning">Meaning</label>
+        <textarea id="f-meaning" rows="2" placeholder="to eat" required></textarea>
+      </div>
+      <div class="field">
+        <label>Tags <span class="field-hint">tap to select; a word can have several</span></label>
+        <div id="tagPicker" class="tag-picker"></div>
+        <div class="tag-add-row">
+          <input id="f-newtag" type="text" placeholder="New tag, e.g. My Weak" autocomplete="off">
+          <button type="button" class="btn" id="addTagBtn">＋ Add tag</button>
+        </div>
+        <input type="hidden" id="f-lesson" value="">
+      </div>
+      <div class="field">
+        <label for="f-notes">Notes / example (optional)</label>
+        <textarea id="f-notes" placeholder="Usage note or an example sentence"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="cancelAdd">Cancel</button>
+        <button type="submit" class="btn primary">Save entry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/data-vocab.js"></script>
+<script src="js/data-drills.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
