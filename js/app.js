@@ -89,6 +89,7 @@
     searchText = "";
     tagFilter = "";
     numDrill = null;
+    qpDrill = null;
     verbDrill = null;
     partDrill = null;
     listenView = "home";
@@ -100,9 +101,9 @@
       b.classList.toggle("active", b === btn);
     });
     render();
-    try { btn.scrollIntoView({inline: "center", block: "nearest", behavior: "smooth"}); } catch (err) {}
   }
   tabsNav.addEventListener("click", function(e){ activateTab(e.target.closest("button[data-tab]")); });
+  tabsNav.style.gridTemplateColumns = "repeat(" + Math.ceil(tabsNav.querySelectorAll("button[data-tab]").length / 2) + ", minmax(0, 1fr))";
   function stepTab(dir){
     var bs = Array.prototype.slice.call(tabsNav.querySelectorAll("button[data-tab]")), i = 0;
     bs.forEach(function(b, k){ if (b.classList.contains("active")) i = k; });
@@ -110,6 +111,8 @@
   }
   document.getElementById("tabPrev").addEventListener("click", function(){ stepTab(-1); });
   document.getElementById("tabNext").addEventListener("click", function(){ stepTab(1); });
+  document.getElementById("tabFirst").addEventListener("click", function(){ var bs = tabsNav.querySelectorAll("button[data-tab]"); activateTab(bs[0]); });
+  document.getElementById("tabLast").addEventListener("click", function(){ var bs = tabsNav.querySelectorAll("button[data-tab]"); activateTab(bs[bs.length - 1]); });
 
   function escapeHtml(s){
     return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
@@ -257,6 +260,22 @@
     });
   }
 
+  var ANT_MAP = null;
+  function antBase(j){ return String(j || "").replace(/（な）/g, ""); }
+  function antList(e){
+    if (!e || e.category !== "vocab") return [];
+    if (!ANT_MAP) {
+      ANT_MAP = {};
+      ANT_PAIRS.forEach(function(p){ (ANT_MAP[p[0]] = ANT_MAP[p[0]] || []).push(p[1]); (ANT_MAP[p[1]] = ANT_MAP[p[1]] || []).push(p[0]); });
+    }
+    return ANT_MAP[antBase(e.jp)] || [];
+  }
+  function findVocabBase(b){
+    for (var i = 0; i < entries.length; i++) if (entries[i].category === "vocab" && antBase(entries[i].jp) === b) return entries[i];
+    return null;
+  }
+  function antLabel(b){ var e = findVocabBase(b); return e ? e.jp : b; }
+
   function rowHtml(e, compact){
     var canSpeak = e.category !== "grammar";
     return '<div class="entry-row' + (compact ? ' compact' : '') + '" data-open="' + e.id + '">' +
@@ -265,6 +284,7 @@
         '<div class="jp-line">' + (e.lesson === "N5 Colour" ? colourSwatch(e.jp) : "") + escapeHtml(e.jp) + (canSpeak ? speakerBtn(speakTextFor(e)) : "") + '</div>' +
         (e.reading ? '<div class="reading">' + escapeHtml(e.reading) + '</div>' : '') +
         '<div class="meaning">' + escapeHtml(e.meaning) + '</div>' +
+        (antList(e).length ? '<div class="ant">⇄ ' + escapeHtml(antList(e).map(antLabel).join("・")) + '</div>' : '') +
         (e.notes && !compact ? '<div class="notes">' + escapeHtml(e.notes) + '</div>' : '') +
       '</div>' +
       '<div class="row-side">' +
@@ -484,6 +504,12 @@
       '<div class="detail-meaning">' + escapeHtml(e.meaning) + '</div>' +
       '<div class="detail-meta">' + chipsHtml(e) + '<span class="cat-mono">' + CAT_LABEL[e.category] + '</span></div>' +
       (e.notes ? '<div class="detail-notes">' + escapeHtml(e.notes) + '</div>' : '');
+    var ants = antList(e);
+    if (ants.length) {
+      html += '<h3 class="detail-h">反義詞 <span class="detail-sub">opposite</span></h3><div class="entry-list">';
+      ants.forEach(function(a){ var ae = findVocabBase(a); html += ae ? rowHtml(ae, true) : '<p class="num-note">' + escapeHtml(a) + '</p>'; });
+      html += '</div>';
+    }
     if (conj) {
       html += '<h3 class="detail-h">活用 <span class="detail-sub">' + escapeHtml(conj.kind) + '</span></h3><table class="conj-table">';
       conj.rows.forEach(function(row){
@@ -565,7 +591,7 @@
       if (s.note) html += '<p class="num-note">' + escapeHtml(s.note) + '</p>';
       html += '<div class="num-grid">';
       s.rows.forEach(function(r){
-        html += '<div class="num-cell"><span class="num-written">' + escapeHtml(r[0]) + '</span><span class="num-reading' + (r[2] ? ' irr' : '') + '">' + escapeHtml(r[1]) + '</span>' + speakerBtn(String(r[1]).split("／")[0]) + '</div>';
+        html += '<div class="num-cell"><span class="num-written">' + escapeHtml(r[0]) + '</span><span class="num-reading' + (r[2] ? ' irr' : '') + '">' + escapeHtml(r[1]) + '</span>' + speakerBtn(String(r[1]).split("／")[0].replace(/[（）]/g, "")) + '</div>';
       });
       html += '</div>';
     });
@@ -586,7 +612,7 @@
       var html = '<div class="quiz-summary"><div class="big-score">' + d.score + ' / ' + d.questions.length + '</div>';
       if (d.missed.length) {
         html += '<p class="count-note">要再看一次：</p><ul>';
-        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.written) + '</strong> ＝ <span class="irr-mark">' + escapeHtml(m.reading) + '</span> <span class="detail-sub">' + escapeHtml(m.section) + '</span> ' + speakerBtn(m.reading.split("／")[0]) + '</li>'; });
+        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.written) + '</strong> ＝ <span class="irr-mark">' + escapeHtml(m.reading) + '</span> <span class="detail-sub">' + escapeHtml(m.section) + '</span> ' + speakerBtn(m.reading.split("／")[0].replace(/[（）]/g, "")) + '</li>'; });
         html += '</ul>';
       } else {
         html += '<p class="count-note">全對——完璧です！</p>';
@@ -622,7 +648,7 @@
           if (b2.getAttribute("data-r") === q.item.reading) { b2.classList.add("correct"); mk.textContent = "◯"; }
           else if (b2.getAttribute("data-r") === chosen) { b2.classList.add("wrong"); mk.textContent = "✗"; }
         });
-        speak(q.item.reading.split("／")[0]);
+        speak(q.item.reading.split("／")[0].replace(/[（）]/g, ""));
         document.getElementById("numNextWrap").style.display = "block";
       });
     });
@@ -684,6 +710,7 @@
       '<button class="pack-card" id="packQR"><span class="pack-jp">即時応答</span><span class="pack-en">Quick Response · ' + LISTEN_QR.length + ' 題</span><span class="pack-desc">聽一句話，從三個「用聽的」回應中選出正確的——選項不會先顯示文字，跟真實考試一樣。</span></button>' +
       '<button class="pack-card" id="packConv"><span class="pack-jp">会話</span><span class="pack-en">Conversations · ' + LISTEN_CONV.length + ' 題</span><span class="pack-desc">聽一段兩人對話（男女聲音不同），回答 JLPT 式問題，答完可逐句重播＋中譯。</span></button>' +
     '</div>';
+    html += '<div class="pack-grid"><button class="pack-card" id="packQP"><span class="pack-jp">設問パターン</span><span class="pack-en">Question patterns · 過去問</span><span class="pack-desc">聽力常見問句已移到「設問」分頁：依考試題型整理，附中文翻譯和練習。</span></button></div>';
     html += '<h3 class="detail-h">真人語音資源</h3><div class="native-links">' +
       '<a href="https://youtube.com/playlist?list=PLkGU7DnOLgRMl-h4NxxrGbK-UdZHIXzKQ" target="_blank" rel="noopener">▶ The Nihongo Nook — N5 聴解 Practice Tests（59部影片）</a>' +
       '<a href="https://www.jlpt.jp/e/samples/sample09.html" target="_blank" rel="noopener">▶ JLPT 官方 N5 樣題＋聽力音檔（免費）</a>' +
@@ -692,8 +719,114 @@
     document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
     document.getElementById("packQR").addEventListener("click", function(){ qrDrill = buildListenDrill(LISTEN_QR); listenView = "qr"; renderListening(); });
     document.getElementById("packConv").addEventListener("click", function(){ convDrill = buildListenDrill(LISTEN_CONV); listenView = "conv"; renderListening(); });
+    document.getElementById("packQP").addEventListener("click", function(){ qpFilter = "聴解12"; activateTab(tabsNav.querySelector('button[data-tab="patterns"]')); });
     updateFooterCount();
   }
+  // ---------- 設問 Question patterns (past papers, merged with the old common-questions list) ----------
+  var qpFilter = "", qpDrill = null;
+  function qpSpeakable(t){ return !/[［＿★（）〜／…]/.test(t); }
+  function qpAudio(t){ return String(t).replace(/（→[^）]*）/g, "").replace(/（[^）]*）/g, "").replace(/[→＝⇄]/g, "、").replace(/[［］＿★]/g, ""); }
+  function qpSrc(src){ return src ? '<span class="src-chip">過去問 ' + src.split(" ").map(function(y){ return "20" + y; }).join("・") + '</span>' : '<span class="src-chip soft">常見</span>'; }
+  function qpGroups(){ return QP_GROUPS.filter(function(g){ return !qpFilter || g.sec === qpFilter; }); }
+  function renderPatterns(){
+    if (qpDrill) { renderQPDrill(); return; }
+    stopSpeech();
+    var side = '<aside class="side-filter"><p class="side-title">題型 Section</p><div class="tagbar"><button class="tag-chip' + (qpFilter === "" ? " active" : "") + '" data-qs="">All</button>' +
+      QP_SECS.map(function(x){ return '<button class="tag-chip' + (qpFilter === x[0] ? " active" : "") + '" data-qs="' + x[0] + '">' + escapeHtml(x[1]) + '</button>'; }).join("") + '</div></aside>';
+    var gs = qpGroups(), nP = 0, nV = 0;
+    gs.forEach(function(g){ nP += g.pats.length; g.pats.forEach(function(p){ nV += p[2].length; }); });
+    var main = '<p class="count-note">過去問（2009・2012・2018）的問題整理成句型：［　］是可以替換的部分。' + nP + ' 個句型、' + nV + ' 個例句。點例句可以聽。</p>' +
+      '<div class="listen-controls"><button class="btn primary" id="qpDrillBtn">聽問句，選意思（10題）</button><label class="listen-slow"><input type="checkbox" id="slowToggle"' + (listenSlow ? ' checked' : '') + '> 慢速</label></div>';
+    gs.forEach(function(g){
+      var secName = QP_SECS.filter(function(x){ return x[0] === g.sec; })[0][1];
+      main += '<div class="p-card"><div class="p-head"><span class="qp-title">' + escapeHtml(g.title) + '</span><span class="seal-chip static">' + escapeHtml(secName) + '</span></div><p class="num-note">' + escapeHtml(g.tip) + '</p>';
+      g.pats.forEach(function(p){
+        main += '<div class="qp-pat"><div class="qp-tpl">' + escapeHtml(p[0]) + (qpSpeakable(p[0]) ? ' ' + speakerBtn(p[0]) : '') + '</div><div class="qp-zh">' + escapeHtml(p[1]) + ' ' + qpSrc(p[3]) + '</div>';
+        if (p[4]) main += '<div class="qp-note">提示：' + escapeHtml(p[4]) + '</div>';
+        if (p[2].length) {
+          main += '<div class="transcript">';
+          p[2].forEach(function(v){ main += '<button class="t-line" data-t="' + escapeHtml(qpAudio(v[0])) + '"><span class="t-jp">' + escapeHtml(v[0]) + '</span></button><p class="t-zh">' + escapeHtml(v[1]) + '</p>'; });
+          main += '</div>';
+        }
+        main += '</div>';
+      });
+      main += '</div>';
+    });
+    content.innerHTML = '<div class="list-layout"><div class="list-main">' + main + '</div>' + side + '</div>';
+    content.querySelectorAll("[data-qs]").forEach(function(c){ c.addEventListener("click", function(){ qpFilter = c.getAttribute("data-qs") || ""; renderPatterns(); }); });
+    document.getElementById("qpDrillBtn").addEventListener("click", function(){ startQPDrill(); renderPatterns(); });
+    document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
+    content.querySelectorAll(".t-line").forEach(function(tl){ tl.addEventListener("click", function(){ speakSeq([{t: tl.getAttribute("data-t"), p: 1}]); }); });
+    wireSpeakers();
+    updateFooterCount();
+  }
+  function qpPool(groups){
+    var pool = [];
+    groups.forEach(function(g){ g.pats.forEach(function(p){
+      if (qpSpeakable(p[0]) && p[1]) pool.push([p[0], p[1]]);
+      p[2].forEach(function(v){ if (v[1] && !/[→＝]/.test(v[0])) pool.push([v[0], v[1]]); });
+    }); });
+    return pool;
+  }
+  function startQPDrill(){
+    var pool = qpPool(qpGroups());
+    if (pool.length < 6) pool = qpPool(QP_GROUPS);
+    var seen = {};
+    pool = pool.filter(function(it){ if (seen[it[0]]) return false; seen[it[0]] = true; return true; });
+    var qs = shuffleArr(pool).slice(0, 10).map(function(it){
+      var ds = [], g = 0;
+      while (ds.length < 3 && g++ < 120) { var o = pick(pool)[1]; if (o !== it[1] && ds.indexOf(o) === -1) ds.push(o); }
+      return {jp: it[0], zh: it[1], options: shuffleArr([it[1]].concat(ds))};
+    });
+    qpDrill = {questions: qs, idx: 0, score: 0, answered: false, missed: []};
+  }
+  function renderQPDrill(){
+    var d = qpDrill;
+    if (d.idx >= d.questions.length) {
+      stopSpeech();
+      var html = '<div class="quiz-summary"><div class="big-score">' + d.score + ' / ' + d.questions.length + '</div>';
+      if (d.missed.length) {
+        html += '<p class="count-note">要再聽一次：</p><ul>';
+        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.jp) + '</strong> — ' + escapeHtml(m.zh) + '</li>'; });
+        html += '</ul>';
+      } else { html += '<p class="count-note">全對——完璧です！</p>'; }
+      html += '<div class="start-row"><button class="btn primary" id="qpAgain">再來一次</button> <button class="btn" id="qpList">回到句型表</button></div></div>';
+      content.innerHTML = html;
+      document.getElementById("qpAgain").addEventListener("click", function(){ startQPDrill(); renderPatterns(); });
+      document.getElementById("qpList").addEventListener("click", function(){ qpDrill = null; renderPatterns(); });
+      return;
+    }
+    var q = d.questions[d.idx];
+    var h = '<div class="quiz-feedback-row"><span class="quiz-q">設問 · 第 ' + (d.idx + 1) + ' 題／共 ' + d.questions.length + ' 題</span><span class="quiz-score-line">Score: ' + d.score + '</span></div>' +
+      '<div class="listen-controls"><button class="btn primary" id="qpPlay">▶ 再播放</button><label class="listen-slow"><input type="checkbox" id="slowToggle"' + (listenSlow ? ' checked' : '') + '> 慢速</label></div>' +
+      '<p class="count-note">這句在問什麼？（先聽，不看字）</p><div class="quiz-options">';
+    q.options.forEach(function(opt, i){ h += '<button class="quiz-opt" data-i="' + i + '">' + escapeHtml(opt) + '<span class="quiz-mark"></span></button>'; });
+    h += '</div><div id="qpReveal"></div><div class="start-row" id="qpNextWrap" style="display:none;"><button class="btn primary" id="qpNext">下一題</button></div>';
+    content.innerHTML = h;
+    var parts = [{t: qpAudio(q.jp), p: 1}];
+    document.getElementById("qpPlay").addEventListener("click", function(){ speakSeq(parts); });
+    document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
+    speakSeq(parts);
+    var btns = content.querySelectorAll(".quiz-opt");
+    btns.forEach(function(b){
+      b.addEventListener("click", function(){
+        if (d.answered) return;
+        d.answered = true;
+        var chosen = q.options[parseInt(b.getAttribute("data-i"), 10)];
+        if (chosen === q.zh) d.score++; else d.missed.push(q);
+        btns.forEach(function(b2){
+          b2.disabled = true;
+          var o2 = q.options[parseInt(b2.getAttribute("data-i"), 10)], mk = b2.querySelector(".quiz-mark");
+          if (o2 === q.zh) { b2.classList.add("correct"); mk.textContent = "◯"; }
+          else if (b2 === b) { b2.classList.add("wrong"); mk.textContent = "✗"; }
+        });
+        document.getElementById("qpReveal").innerHTML = '<p class="num-note"><span class="t-jp">' + escapeHtml(q.jp) + '</span></p>';
+        document.getElementById("qpNextWrap").style.display = "block";
+      });
+    });
+    document.getElementById("qpNext").addEventListener("click", function(){ d.idx++; d.answered = false; stopSpeech(); renderQPDrill(); });
+  }
+
   function renderListenDrill(d, kind){
     if (d.idx >= d.questions.length) {
       stopSpeech();
@@ -1117,82 +1250,13 @@
     });
   }
 
-  // ---------- Answer sheet for the 2018 official workbook (questions stay in the user's own copy) ----------
-  var SHEET_KEY = "jpNotebookSheet2018";
-  function loadSheet(){ try { var o = JSON.parse(localStorage.getItem(SHEET_KEY) || "{}"); return (o && typeof o === "object") ? o : {}; } catch (e) { return {}; } }
-  var sheetOpen = false, sheetSec = 0, sheetGraded = false, sheetAns = loadSheet(), sheetEnd = 0, sheetTick = null;
-  function saveSheet(){ try { localStorage.setItem(SHEET_KEY, JSON.stringify(sheetAns)); } catch (e) {} }
-  function sheetScore(sec){
-    var c = 0, n = 0;
-    sec.parts.forEach(function(p, pi){ for (var i = 0; i < p.key.length; i++) { n++; if (sheetAns[sec.id + "-" + pi + "-" + i] === p.key[i]) c++; } });
-    return [c, n];
-  }
-  function renderSheet(){
-    var sec = SHEET[sheetSec];
-    var h = '<div class="quiz-feedback-row"><span class="quiz-q">公式問題集（2018）採点シート</span><button class="btn" id="sheetClose">回到選單</button></div>';
-    h += '<p class="count-note">題目請看你自己的 PDF 或紙本，這裡只作答、計時和對答案。作答會自動保存在這個瀏覽器。</p>';
-    h += '<div class="tagbar">' + SHEET.map(function(s2, i){ return '<button class="tag-chip' + (i === sheetSec ? ' active' : '') + '" data-ss="' + i + '">' + escapeHtml(s2.title) + '</button>'; }).join("") + '</div>';
-    h += '<div class="listen-controls"><button class="btn" id="sheetTimerBtn">⏱ 開始計時（' + sec.min + '分）</button><span id="sheetTimer" class="quiz-score-line"></span></div>';
-    if (sheetGraded) {
-      var v = sheetScore(SHEET[0]), g = sheetScore(SHEET[1]), l = sheetScore(SHEET[2]);
-      var gs = Math.round(120 * (v[0] + g[0]) / (v[1] + g[1])), ls = Math.round(60 * l[0] / l[1]), tot = gs + ls, pass = tot >= 80 && gs >= 38 && ls >= 19;
-      h += '<table class="verb-table"><tr><th>科目</th><th>答對</th><th>換算（估算）</th></tr>' +
-        '<tr><td>文字・語彙</td><td>' + v[0] + ' / ' + v[1] + '</td><td rowspan="2">' + gs + ' / 120</td></tr>' +
-        '<tr><td>文法・読解</td><td>' + g[0] + ' / ' + g[1] + '</td></tr>' +
-        '<tr><td>聴解</td><td>' + l[0] + ' / ' + l[1] + '</td><td>' + ls + ' / 60</td></tr></table>' +
-        '<p class="order-verdict ' + (pass ? 'ok' : 'ng') + '">' + (pass ? '◯ ' : '✗ ') + '總分約 ' + tot + ' / 180（合格 80，且兩科各達 38・19）</p>' +
-        '<p class="num-note">這是按答對比例的估算；正式考試用換算分數，結果會有出入。</p>';
-    }
-    sec.parts.forEach(function(p, pi){
-      h += '<h3 class="detail-h">' + escapeHtml(p.name) + '</h3>';
-      for (var i = 0; i < p.key.length; i++) {
-        var id = sec.id + "-" + pi + "-" + i, a = sheetAns[id];
-        h += '<div class="sheet-row"><span class="sheet-num">' + (p.start + i) + '</span><span class="sheet-opts">';
-        for (var o = 1; o <= p.opts; o++) {
-          var cls = "sheet-opt" + (a === o ? " sel" : "");
-          if (sheetGraded) { if (o === p.key[i]) cls += " right"; else if (a === o) cls += " wrong"; }
-          h += '<button class="' + cls + '" data-sid="' + id + '" data-o="' + o + '"' + (sheetGraded ? ' disabled' : '') + '>' + o + '</button>';
-        }
-        h += '</span>' + (sheetGraded ? '<span class="sheet-note">' + (a === p.key[i] ? '◯ ' : (a ? '✗ ' : '— ')) + escapeHtml(p.notes[i]) + '</span>' : '') + '</div>';
-      }
-    });
-    h += '<div class="start-row">' + (sheetGraded ? '<button class="btn" id="sheetBack">繼續作答</button> <button class="btn primary" id="sheetRedo">清除答案，重新作答</button>' : '<button class="btn primary" id="sheetGrade">採点する（對答案）</button>') + '</div>';
-    content.innerHTML = h;
-    document.getElementById("sheetClose").addEventListener("click", function(){ sheetOpen = false; renderQuiz(); });
-    content.querySelectorAll("[data-ss]").forEach(function(b){ b.addEventListener("click", function(){ sheetSec = parseInt(b.getAttribute("data-ss"), 10); renderSheet(); }); });
-    content.querySelectorAll("[data-sid]").forEach(function(b){
-      b.addEventListener("click", function(){
-        var id = b.getAttribute("data-sid"), o = parseInt(b.getAttribute("data-o"), 10);
-        if (sheetAns[id] === o) delete sheetAns[id]; else sheetAns[id] = o;
-        saveSheet();
-        content.querySelectorAll('[data-sid="' + id + '"]').forEach(function(x){ x.classList.toggle("sel", parseInt(x.getAttribute("data-o"), 10) === sheetAns[id]); });
-      });
-    });
-    var gb = document.getElementById("sheetGrade");
-    if (gb) gb.addEventListener("click", function(){ sheetGraded = true; renderSheet(); });
-    var bb = document.getElementById("sheetBack");
-    if (bb) bb.addEventListener("click", function(){ sheetGraded = false; renderSheet(); });
-    var rb = document.getElementById("sheetRedo");
-    if (rb) rb.addEventListener("click", function(){ if (confirm("清除這份試題的所有作答？")) { sheetAns = {}; saveSheet(); sheetGraded = false; renderSheet(); } });
-    document.getElementById("sheetTimerBtn").addEventListener("click", function(){
-      sheetEnd = Date.now() + sec.min * 60000;
-      if (sheetTick) clearInterval(sheetTick);
-      sheetTick = setInterval(function(){
-        var el = document.getElementById("sheetTimer");
-        if (!el) { clearInterval(sheetTick); sheetTick = null; return; }
-        var left = sheetEnd - Date.now();
-        el.textContent = left > 0 ? "剩 " + fmtTime(left) : "時間到";
-      }, 1000);
-    });
-  }
-
   // ---------- Quiz (JLPT-format trainer; all questions original) ----------
   var quizState = null;
   var QUIZ_FORMATS = [
     ["kanji","漢字読み","もじ・ごい 1"],["ortho","表記","もじ・ごい 2"],["fill","文脈規定","もじ・ごい 3"],["para","言い換え","もじ・ごい 4"],
     ["particle","助詞","ぶんぽう 1"],["gram","文法形式","ぶんぽう 1"],["star","★並べ替え","ぶんぽう 2"],["textg","文章の文法","ぶんぽう 3"],
     ["read","読解","どっかい"],["say","発話表現","ちょうかい 3"],["lconv","会話聴解","ちょうかい 1・2 (audio)"],["qr","即時応答","ちょうかい 4 (audio)"],
-    ["vocab","語彙","word meaning"],["verb","活用","verb forms"],["plain","普通形","polite → plain"],["order","文作り","build the sentence"],["conv","会話完成","dialogue"]
+    ["vocab","語彙","word meaning"],["verb","活用","verb forms"],["plain","普通形","polite → plain"],["order","文作り","build the sentence"],["conv","会話完成","dialogue"],["ant","反義語","opposite word"]
   ];
   var quizSel = {};
   QUIZ_FORMATS.forEach(function(f){ quizSel[f[0]] = true; });
@@ -1322,7 +1386,16 @@
     var d = pick(ORDER_DRILL);
     return {type: "order", key: "order:" + d[0].join(""), words: d[0], tiles: shuffleArr(d[0].map(function(w, i){ return {w: w, i: i}; })), picked: [], zh: d[1], missTxt: d[0].join("")};
   }
-  var MAKERS = {vocab: makeVocabQ, kanji: makeKanjiQ, ortho: makeOrthoQ, fill: makeFillQ, para: makeParaQ, particle: makeParticleQ, gram: makeGramQ, verb: makeVerbQ, plain: makePlainQ, star: makeStarQ, textg: makeTextgQ, read: makeReadQ, conv: makeConvQ, say: makeSayQ, qr: makeQRQ, lconv: makeLConvQ, order: makeOrderQ};
+  function makeAntQ(){
+    var pool = [];
+    ANT_PAIRS.forEach(function(p){ var a = findVocabBase(p[0]), b = findVocabBase(p[1]); if (a && b) { pool.push([a, b]); pool.push([b, a]); } });
+    if (pool.length < 4) return null;
+    var pr = pick(pool), a = pr[0], b = pr[1];
+    var bad = antList(a).concat([antBase(a.jp), antBase(b.jp)]), ds = [], g = 0;
+    while (ds.length < 3 && g++ < 120) { var o = pick(pool)[0]; if (bad.indexOf(antBase(o.jp)) === -1 && ds.indexOf(o.jp) === -1) ds.push(o.jp); }
+    return mcQ("ant", a.id, '<div class="quiz-jp">' + escapeHtml(a.jp) + ' ' + speakerBtn(speakTextFor(a)) + '</div><div class="quiz-reading">' + escapeHtml(a.reading || "") + ' · ' + escapeHtml(a.meaning) + '</div>' + qHead("反対の いみの ことばは どれですか。"), b.jp, ds, {optClass: "p-opts", speak: speakTextFor(b), missTxt: a.jp + " ⇄ " + b.jp});
+  }
+  var MAKERS = {vocab: makeVocabQ, kanji: makeKanjiQ, ortho: makeOrthoQ, fill: makeFillQ, para: makeParaQ, particle: makeParticleQ, gram: makeGramQ, verb: makeVerbQ, plain: makePlainQ, star: makeStarQ, textg: makeTextgQ, read: makeReadQ, conv: makeConvQ, say: makeSayQ, qr: makeQRQ, lconv: makeLConvQ, order: makeOrderQ, ant: makeAntQ};
 
   function newState(qs, mock){
     var st = {questions: qs, idx: 0, score: 0, answered: false, missed: [], mock: !!mock, t0: Date.now(), secScore: {G: 0, L: 0}, secTotal: {G: 0, L: 0}};
@@ -1359,16 +1432,12 @@
   }
 
   function renderQuiz(){
-    if (sheetOpen) { renderSheet(); return; }
     if (!quizState) {
       stopSpeech();
       var total = 0; MOCK_PLAN.forEach(function(p){ total += p[1]; });
       var html = '<div class="mock-card"><div class="pack-jp">模擬試験</div><div class="pack-en">JLPT N5 format · ' + total + ' 題 · 文字語彙 → 文法 → 読解 → 聴解</div>' +
         '<p class="pack-desc">題型與順序比照正式考試（文字・語彙 もんだい1〜4、文法 1〜3、読解、聴解）。題目全部是原創練習題，不是官方試題。結束後顯示各科得分與合格線估算。</p>' +
         '<button class="btn primary" id="startMock">開始模擬試験</button></div>';
-      html += '<div class="mock-card"><div class="pack-jp">公式問題集 採点シート</div><div class="pack-en">2018 official workbook · 91 題 · 作答、計時、對答案</div>' +
-        '<p class="pack-desc">搭配你自己的官方問題集 PDF 使用：題目看 PDF，在這裡作答；對完答案後，每一題會顯示這題在考什麼。</p>' +
-        '<button class="btn" id="openSheet">打開採点シート</button></div>';
       html += '<h3 class="detail-h">自由練習 <span class="detail-sub">勾選題型，每次 10 題</span></h3><div class="fmt-grid">';
       QUIZ_FORMATS.forEach(function(f){
         html += '<label class="fmt-opt"><input type="checkbox" data-fmt="' + f[0] + '"' + (quizSel[f[0]] ? ' checked' : '') + '><span><span class="fmt-jp">' + f[1] + '</span><br><span class="fmt-en">' + f[2] + '</span></span></label>';
@@ -1381,7 +1450,6 @@
       document.getElementById("selNone").addEventListener("click", function(){ QUIZ_FORMATS.forEach(function(f){ quizSel[f[0]] = false; }); renderQuiz(); });
       document.getElementById("startQuiz").addEventListener("click", function(){ quizState = buildMixedQuiz(10); renderQuiz(); });
       document.getElementById("startMock").addEventListener("click", function(){ quizState = buildMock(); startTick(); renderQuiz(); });
-      document.getElementById("openSheet").addEventListener("click", function(){ sheetOpen = true; renderQuiz(); });
       return;
     }
     var st = quizState;
@@ -1489,6 +1557,8 @@
       renderListening();
     } else if (activeTab === "verbs") {
       renderVerbs();
+    } else if (activeTab === "patterns") {
+      renderPatterns();
     } else if (activeTab === "particles") {
       renderParticles();
     } else if (activeTab === "flashcards") {

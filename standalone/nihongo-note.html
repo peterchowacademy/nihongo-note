@@ -588,37 +588,65 @@
   .mock-card { border: 1px solid var(--indigo); border-radius: 6px; background: var(--paper-card); padding: 16px; margin: 4px 0 8px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
   .plain-table td { font-family: var(--font-display); font-size: 14px; line-height: 1.5; }
   .fmt-opt { align-items: flex-start; }
+  /* v0.2.2: on narrow screens the category bar sits above the search box and list */
+  @media (max-width: 879px) {
+    .list-layout { display: flex; flex-direction: column; }
+    .list-layout .side-filter { order: -1; }
+    .list-layout .list-main { width: 100%; }
+    .tab-arrow { padding: 0 5px; }
+  }
 
-  /* answer sheet */
-  .sheet-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 7px 0; border-bottom: 1px solid var(--hairline); }
-  .sheet-num { width: 26px; font-weight: 700; color: var(--ink-soft); font-size: 13px; }
-  .sheet-opts { display: flex; gap: 6px; }
-  .sheet-opt { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--hairline-strong); background: var(--paper-card); color: var(--ink); cursor: pointer; font-size: 14px; }
-  .sheet-opt.sel { background: var(--indigo); border-color: var(--indigo); color: var(--paper); font-weight: 700; }
-  .sheet-opt.right { border: 2px solid var(--success); color: var(--success); background: var(--paper-card); font-weight: 700; }
-  .sheet-opt.sel.right { background: var(--success); color: var(--paper); }
-  .sheet-opt.wrong { background: var(--seal); border-color: var(--seal); color: var(--paper); }
-  .sheet-note { flex: 1 1 220px; font-size: 12.5px; color: var(--ink-soft); }
+
+  /* v0.3.1 */
+  .app { overflow-x: clip; }
+  .tabs-wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px; border-bottom: 1px solid var(--hairline); margin-bottom: 18px; padding-bottom: 6px; }
+  .tab-arrows { display: flex; align-items: center; }
+  .tabs-wrap .tab-arrow { width: 28px; height: 44px; padding: 0; text-align: center; flex: 0 0 auto; }
+  .tabs-wrap nav.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px 4px; overflow: visible; border-bottom: none; margin: 0; }
+  .tabs-wrap nav.tabs button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; padding: 5px 2px 6px; border-radius: 3px; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tabs-wrap nav.tabs button .jp { margin: 0; font-size: 15px; }
+  .tabs-wrap nav.tabs button .en { font-size: 10.5px; color: var(--ink-faint); max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .tabs-wrap nav.tabs button.active { background: var(--paper-card); border-bottom-color: var(--indigo); }
+  .tabs-wrap nav.tabs button.active .en { color: var(--ink-soft); }
+  @media (max-width: 520px) {
+    .tabs-wrap nav.tabs button .en { display: none; }
+    .tabs-wrap .tab-arrow { width: 22px; font-size: 20px; }
+  }
+  .ant { margin-top: 3px; font-size: 12.5px; color: var(--indigo); }
+  .qp-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; flex: 1; }
+  .qp-pat { padding: 10px 0 6px; border-bottom: 1px solid var(--hairline); }
+  .qp-pat:last-child { border-bottom: none; }
+  .qp-tpl { font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+  .qp-zh { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
+  .qp-note { font-size: 12.5px; color: var(--ink-faint); margin-top: 3px; }
+  .src-chip { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--seal); border: 1px solid var(--seal); border-radius: 2px; padding: 0 5px; margin-left: 4px; vertical-align: middle; }
+  .src-chip.soft { color: var(--ink-faint); border-color: var(--hairline-strong); }
+  .qp-pat .transcript { margin-top: 4px; }
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
-    <div class="top-row"><h1>日本語ノート</h1><span class="ver-line">v0.2.1, released 2026-11-15</span></div>
+    <div class="top-row"><h1>日本語ノート</h1><span class="ver-line">v0.3.1, released 2026-11-21</span></div>
     <p class="prof-line">Language proficiency: N5</p>
   </header>
 
-  <div class="tabs-wrap"><button class="tab-arrow" id="tabPrev" aria-label="Previous section">‹</button><nav class="tabs" id="tabs">
-    <button data-tab="vocab" class="active"><span class="jp">語彙</span>Vocabulary</button>
-    <button data-tab="phrase"><span class="jp">フレーズ</span>Phrases</button>
-    <button data-tab="grammar"><span class="jp">文法</span>Grammar</button>
-    <button data-tab="numbers"><span class="jp">数</span>Numbers</button>
-    <button data-tab="listening"><span class="jp">聴解</span>Listening</button>
-    <button data-tab="verbs"><span class="jp">活用</span>Verbs</button>
-    <button data-tab="particles"><span class="jp">助詞</span>Particles</button>
-    <button data-tab="flashcards"><span class="jp">カード</span>Flashcards</button>
-    <button data-tab="quiz"><span class="jp">クイズ</span>Quiz</button>
-  </nav><button class="tab-arrow" id="tabNext" aria-label="Next section">›</button></div>
+  <div class="tabs-wrap">
+    <div class="tab-arrows"><button class="tab-arrow" id="tabFirst" aria-label="First section">«</button><button class="tab-arrow" id="tabPrev" aria-label="Previous section">‹</button></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="vocab" class="active"><span class="jp">語彙</span><span class="en">Vocabulary</span></button>
+      <button data-tab="phrase"><span class="jp">フレーズ</span><span class="en">Phrases</span></button>
+      <button data-tab="grammar"><span class="jp">文法</span><span class="en">Grammar</span></button>
+      <button data-tab="numbers"><span class="jp">数</span><span class="en">Numbers</span></button>
+      <button data-tab="listening"><span class="jp">聴解</span><span class="en">Listening</span></button>
+      <button data-tab="verbs"><span class="jp">活用</span><span class="en">Verbs</span></button>
+      <button data-tab="particles"><span class="jp">助詞</span><span class="en">Particles</span></button>
+      <button data-tab="patterns"><span class="jp">設問</span><span class="en">Questions</span></button>
+      <button data-tab="flashcards"><span class="jp">カード</span><span class="en">Flashcards</span></button>
+      <button data-tab="quiz"><span class="jp">クイズ</span><span class="en">Quiz</span></button>
+    </nav>
+    <div class="tab-arrows"><button class="tab-arrow" id="tabNext" aria-label="Next section">›</button><button class="tab-arrow" id="tabLast" aria-label="Last section">»</button></div>
+  </div>
 
   <main id="content"></main>
 
@@ -1631,6 +1659,70 @@
     {id:"pg6",category:"grammar",jp:"其他句型的常體",reading:"sonota",meaning:"常見句型的丁寧形→普通形",lesson:"L20|普通形",notes:"〜たいです→〜たい／〜てください→〜て／〜ています→〜ている／〜なければなりません→〜なければならない／〜ことができます→〜ことができる／〜と思います→〜と思う。"}
   ];
   SEED = SEED.concat(C_PACK);
+  var V31_PACK = [
+    {id:"v31",category:"vocab",jp:"次",reading:"つぎ",meaning:"next",lesson:"N5 Adv",notes:"其實是名詞，常像副詞用：「次、〜」＝接下來；「次の〜」＝下一個〜；「次に」＝其次。過去問（2018 聴解）：学生は、次、何日に学校に来ますか。"},
+    {id:"v32",category:"vocab",jp:"もっと",reading:"もっと",meaning:"more; even more",lesson:"N5 Adv",notes:"もっと＋形容詞＝更…。過去問（2018 聴解）：もっと早いですよ。"},
+    {id:"v33",category:"vocab",jp:"ちょうど",reading:"ちょうど",meaning:"exactly; just",lesson:"N5 Adv",notes:"ちょうど12時です＝剛好12點。"},
+    {id:"v34",category:"vocab",jp:"たいてい",reading:"たいてい",meaning:"usually; mostly",lesson:"N5 Adv",notes:"たいてい7時に起きます。"},
+    {id:"v35",category:"vocab",jp:"まず",reading:"まず",meaning:"first of all",lesson:"N5 Adv",notes:"聴解問「まず何をしますか」時，答案是第一件事。"},
+    {id:"v36",category:"vocab",jp:"はじめに",reading:"はじめに",meaning:"first; at the beginning",lesson:"N5 Adv",notes:"過去問（2009・2012・2018）常問：はじめに何をしますか。"},
+    {id:"v37",category:"vocab",jp:"みんな",reading:"みんな",meaning:"everyone; all",lesson:"N5 Adv",notes:"みんなで＝大家一起。"},
+    {id:"v38",category:"vocab",jp:"いちばん",reading:"いちばん",meaning:"the most; number one",lesson:"L12|N5 Adv",notes:"〜で〜がいちばん〜です。"},
+    {id:"v39",category:"vocab",jp:"いかが",reading:"いかが",meaning:"how (polite)",lesson:"N5 Adv",notes:"いかがですか＝どうですか的禮貌說法；也用來請對方吃東西。"},
+    {id:"v310",category:"vocab",jp:"もう",reading:"もう",meaning:"already; (one) more",lesson:"L7|N5 Adv",notes:"もう食べました（已經）／もう一つ（再一個）。"},
+    {id:"v311",category:"vocab",jp:"まだ",reading:"まだ",meaning:"still; not yet",lesson:"L7|N5 Adv",notes:"回答「もう〜ましたか」：いいえ、まだです。"},
+    {id:"v312",category:"vocab",jp:"けっこうです",reading:"けっこうです",meaning:"no, thank you; that's fine",lesson:"L14|N5 Greet",notes:"拒絕對方的提議：いいえ、けっこうです。"},
+    {id:"v313",category:"vocab",jp:"どうぞ",reading:"どうぞ",meaning:"please (go ahead / have some)",lesson:"N5 Greet",notes:"お茶、どうぞ。＝請喝茶。"},
+    {id:"v314",category:"vocab",jp:"どうも",reading:"どうも",meaning:"thanks; very",lesson:"N5 Greet",notes:"どうもありがとうございます。"},
+    {id:"v315",category:"vocab",jp:"同じ",reading:"おなじ",meaning:"same",lesson:"N5 Adj",notes:"後面直接接名詞，不加な或の：同じ日、同じ服。"},
+    {id:"v316",category:"vocab",jp:"おにぎり",reading:"おにぎり",meaning:"rice ball",lesson:"N5 Food",notes:"過去問（2012・2018 聴解）。"},
+    {id:"v317",category:"vocab",jp:"みかん",reading:"みかん",meaning:"mandarin orange",lesson:"N5 Food",notes:"漢字：蜜柑。過去問（2018 聴解）。"},
+    {id:"v318",category:"vocab",jp:"そば",reading:"そば",meaning:"soba (buckwheat noodles)",lesson:"N5 Food",notes:"同音：そば＝旁邊。そば屋＝蕎麥麵店（過去問 2018 聴解）。"},
+    {id:"v319",category:"vocab",jp:"ラーメン",reading:"らーめん",meaning:"ramen",lesson:"N5 Food",notes:"過去問（2012 文法・聴解）。"},
+    {id:"v320",category:"vocab",jp:"カレー",reading:"かれー",meaning:"curry",lesson:"N5 Food",notes:"カレー屋＝咖哩店（過去問 2018 聴解）。"},
+    {id:"v321",category:"vocab",jp:"ピザ",reading:"ぴざ",meaning:"pizza",lesson:"N5 Food",notes:"過去問（2018 聴解）。"},
+    {id:"v322",category:"vocab",jp:"スパゲティ",reading:"すぱげてぃ",meaning:"spaghetti",lesson:"N5 Food",notes:"過去問（2018 聴解）。"},
+    {id:"v323",category:"vocab",jp:"バナナ",reading:"ばなな",meaning:"banana",lesson:"N5 Food",notes:"過去問（2018 読解・聴解）。"},
+    {id:"v324",category:"vocab",jp:"すいか",reading:"すいか",meaning:"watermelon",lesson:"N5 Food",notes:"過去問（2018 文法）。"},
+    {id:"v325",category:"vocab",jp:"いちご",reading:"いちご",meaning:"strawberry",lesson:"N5 Food",notes:"いちごのケーキ（過去問 2018 文法）。"},
+    {id:"v326",category:"vocab",jp:"とうふ",reading:"とうふ",meaning:"tofu",lesson:"N5 Food",notes:"過去問（2012 読解）。"},
+    {id:"v327",category:"vocab",jp:"しょうゆ",reading:"しょうゆ",meaning:"soy sauce",lesson:"N5 Food",notes:"過去問（2012 読解）。"},
+    {id:"v328",category:"vocab",jp:"なっとう",reading:"なっとう",meaning:"natto (fermented soybeans)",lesson:"N5 Food",notes:"過去問（2018 文法・読解）。"},
+    {id:"v329",category:"vocab",jp:"クッキー",reading:"くっきー",meaning:"cookie",lesson:"N5 Food",notes:"過去問（2018 聴解）。"},
+    {id:"v330",category:"vocab",jp:"ケーキ",reading:"けーき",meaning:"cake",lesson:"N5 Food",notes:"ケーキ屋＝蛋糕店（過去問 2012 語彙・2018 文法）。"},
+    {id:"v331",category:"vocab",jp:"チョコレート",reading:"ちょこれーと",meaning:"chocolate",lesson:"N5 Food",notes:"過去問（2018 聴解）。"},
+    {id:"v332",category:"vocab",jp:"アイスクリーム",reading:"あいすくりーむ",meaning:"ice cream",lesson:"L13|N5 Food",notes:""},
+    {id:"v333",category:"vocab",jp:"紅茶",reading:"こうちゃ",meaning:"black tea",lesson:"N5 Food",notes:"過去問（2018 文法）。"},
+    {id:"v334",category:"vocab",jp:"牛肉",reading:"ぎゅうにく",meaning:"beef",lesson:"N5 Food",notes:""},
+    {id:"v335",category:"vocab",jp:"豚肉",reading:"ぶたにく",meaning:"pork",lesson:"N5 Food",notes:""},
+    {id:"v336",category:"vocab",jp:"鶏肉",reading:"とりにく",meaning:"chicken (meat)",lesson:"N5 Food",notes:"過去問（2009 読解）。"},
+    {id:"v337",category:"vocab",jp:"食堂",reading:"しょくどう",meaning:"cafeteria; dining hall",lesson:"N5 Place",notes:"過去問（2012・2018 聴解）。"},
+    {id:"v338",category:"vocab",jp:"八百屋",reading:"やおや",meaning:"greengrocer",lesson:"N5 Place",notes:"過去問（2018 文法）。"},
+    {id:"v339",category:"vocab",jp:"肉屋",reading:"にくや",meaning:"butcher's shop",lesson:"N5 Place",notes:"〜屋＝〜店。過去問（2009 読解）。"},
+    {id:"v340",category:"vocab",jp:"魚屋",reading:"さかなや",meaning:"fish shop",lesson:"N5 Place",notes:"過去問（2009 読解）。"},
+    {id:"v341",category:"vocab",jp:"花屋",reading:"はなや",meaning:"flower shop",lesson:"N5 Place",notes:"過去問（2009 読解）。"},
+    {id:"v342",category:"vocab",jp:"薬屋",reading:"くすりや",meaning:"pharmacy",lesson:"N5 Place",notes:"過去問（2009 読解）。"},
+    {id:"v343",category:"vocab",jp:"パン屋",reading:"ぱんや",meaning:"bakery",lesson:"N5 Place",notes:"過去問（2009 読解・2012 聴解）。"},
+    {id:"v344",category:"vocab",jp:"アパート",reading:"あぱーと",meaning:"apartment",lesson:"N5 Place",notes:"過去問（2012 語彙）。"},
+    {id:"v345",category:"vocab",jp:"つまらない",reading:"つまらない",meaning:"boring",lesson:"N5 Adj",notes:"い-adjective。反義：おもしろい・たのしい。"},
+    {id:"v346",category:"vocab",jp:"汚い",reading:"きたない",meaning:"dirty",lesson:"N5 Adj",notes:"い-adjective。反義：きれい。"},
+    {id:"v347",category:"vocab",jp:"太い",reading:"ふとい",meaning:"thick (round things)",lesson:"N5 Adj",notes:"い-adjective"},
+    {id:"v348",category:"vocab",jp:"細い",reading:"ほそい",meaning:"thin; narrow",lesson:"N5 Adj",notes:"い-adjective。ほそいみち＝窄路。"},
+    {id:"v349",category:"vocab",jp:"厚い",reading:"あつい",meaning:"thick (flat things)",lesson:"N5 Adj",notes:"い-adjective。同音：暑い・熱い。"},
+    {id:"v350",category:"vocab",jp:"薄い",reading:"うすい",meaning:"thin (flat things)",lesson:"N5 Adj",notes:"い-adjective"},
+    {id:"v351",category:"vocab",jp:"うるさい",reading:"うるさい",meaning:"noisy",lesson:"N5 Adj",notes:"い-adjective。過去問（2009・2012 語彙）。"},
+    {id:"v352",category:"vocab",jp:"丸い",reading:"まるい",meaning:"round",lesson:"N5 Adj",notes:"い-adjective"},
+    {id:"v353",category:"vocab",jp:"靴下",reading:"くつした",meaning:"socks",lesson:"N5 Thing",notes:"過去問（2012 聴解）。"},
+    {id:"v354",category:"vocab",jp:"消しゴム",reading:"けしごむ",meaning:"eraser",lesson:"N5 Thing",notes:""},
+    {id:"v355",category:"vocab",jp:"ボールペン",reading:"ぼーるぺん",meaning:"ballpoint pen",lesson:"N5 Thing",notes:""},
+    {id:"v356",category:"vocab",jp:"エレベーター",reading:"えれべーたー",meaning:"elevator",lesson:"N5 Thing",notes:""},
+    {id:"v357",category:"vocab",jp:"メートル",reading:"めーとる",meaning:"metre",lesson:"N5 Count",notes:"500メートルおよぎました。"},
+    {id:"v358",category:"vocab",jp:"グラム",reading:"ぐらむ",meaning:"gram",lesson:"N5 Count",notes:""},
+    {id:"v359",category:"vocab",jp:"一日",reading:"いちにち",meaning:"one day; all day",lesson:"N5 Time",notes:"天數的「一天」是いちにち；日期的「1號」是ついたち。"},
+    {id:"v360",category:"vocab",jp:"〜日間",reading:"〜にちかん",meaning:"for ~ days",lesson:"N5 Time|N5 Count",notes:"二日間〜十日間跟日期讀法一樣：ふつかかん、むいかかん…。過去問：4日間（2012 聴解）、六日間（2018 聴解）。"},
+    {id:"v361",category:"vocab",jp:"何日間",reading:"なんにちかん",meaning:"how many days",lesson:"N5 Time|N5 Q-word",notes:""}
+  ];
+  SEED = SEED.concat(V31_PACK);
 
   var CAT_LABEL = {vocab:"語", phrase:"句", grammar:"文"};
   var CAT_TITLE = {vocab:"Vocabulary", phrase:"Phrase", grammar:"Grammar"};
@@ -1715,6 +1807,7 @@
     searchText = "";
     tagFilter = "";
     numDrill = null;
+    qpDrill = null;
     verbDrill = null;
     partDrill = null;
     listenView = "home";
@@ -1726,9 +1819,9 @@
       b.classList.toggle("active", b === btn);
     });
     render();
-    try { btn.scrollIntoView({inline: "center", block: "nearest", behavior: "smooth"}); } catch (err) {}
   }
   tabsNav.addEventListener("click", function(e){ activateTab(e.target.closest("button[data-tab]")); });
+  tabsNav.style.gridTemplateColumns = "repeat(" + Math.ceil(tabsNav.querySelectorAll("button[data-tab]").length / 2) + ", minmax(0, 1fr))";
   function stepTab(dir){
     var bs = Array.prototype.slice.call(tabsNav.querySelectorAll("button[data-tab]")), i = 0;
     bs.forEach(function(b, k){ if (b.classList.contains("active")) i = k; });
@@ -1736,6 +1829,8 @@
   }
   document.getElementById("tabPrev").addEventListener("click", function(){ stepTab(-1); });
   document.getElementById("tabNext").addEventListener("click", function(){ stepTab(1); });
+  document.getElementById("tabFirst").addEventListener("click", function(){ var bs = tabsNav.querySelectorAll("button[data-tab]"); activateTab(bs[0]); });
+  document.getElementById("tabLast").addEventListener("click", function(){ var bs = tabsNav.querySelectorAll("button[data-tab]"); activateTab(bs[bs.length - 1]); });
 
   function escapeHtml(s){
     return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
@@ -1896,6 +1991,23 @@
     });
   }
 
+  var ANT_PAIRS = [["大きい", "小さい"], ["新しい", "古い"], ["いい／良い", "悪い"], ["暑い", "寒い"], ["熱い", "冷たい"], ["難しい", "易しい"], ["難しい", "簡単"], ["高い", "安い"], ["高い", "低い"], ["多い", "少ない"], ["早い", "遅い"], ["速い", "遅い"], ["近い", "遠い"], ["広い", "狭い"], ["重い", "軽い"], ["長い", "短い"], ["明るい", "暗い"], ["強い", "弱い"], ["面白い", "つまらない"], ["たのしい", "つまらない"], ["おいしい", "まずい"], ["白い", "黒い"], ["暖かい", "涼しい"], ["甘い", "辛い"], ["忙しい", "暇"], ["静か", "にぎやか"], ["静か", "うるさい"], ["好き", "嫌い"], ["上手", "下手"], ["便利", "不便"], ["きれい", "汚い"], ["太い", "細い"], ["厚い", "薄い"]];
+  var ANT_MAP = null;
+  function antBase(j){ return String(j || "").replace(/（な）/g, ""); }
+  function antList(e){
+    if (!e || e.category !== "vocab") return [];
+    if (!ANT_MAP) {
+      ANT_MAP = {};
+      ANT_PAIRS.forEach(function(p){ (ANT_MAP[p[0]] = ANT_MAP[p[0]] || []).push(p[1]); (ANT_MAP[p[1]] = ANT_MAP[p[1]] || []).push(p[0]); });
+    }
+    return ANT_MAP[antBase(e.jp)] || [];
+  }
+  function findVocabBase(b){
+    for (var i = 0; i < entries.length; i++) if (entries[i].category === "vocab" && antBase(entries[i].jp) === b) return entries[i];
+    return null;
+  }
+  function antLabel(b){ var e = findVocabBase(b); return e ? e.jp : b; }
+
   function rowHtml(e, compact){
     var canSpeak = e.category !== "grammar";
     return '<div class="entry-row' + (compact ? ' compact' : '') + '" data-open="' + e.id + '">' +
@@ -1904,6 +2016,7 @@
         '<div class="jp-line">' + (e.lesson === "N5 Colour" ? colourSwatch(e.jp) : "") + escapeHtml(e.jp) + (canSpeak ? speakerBtn(speakTextFor(e)) : "") + '</div>' +
         (e.reading ? '<div class="reading">' + escapeHtml(e.reading) + '</div>' : '') +
         '<div class="meaning">' + escapeHtml(e.meaning) + '</div>' +
+        (antList(e).length ? '<div class="ant">⇄ ' + escapeHtml(antList(e).map(antLabel).join("・")) + '</div>' : '') +
         (e.notes && !compact ? '<div class="notes">' + escapeHtml(e.notes) + '</div>' : '') +
       '</div>' +
       '<div class="row-side">' +
@@ -2123,6 +2236,12 @@
       '<div class="detail-meaning">' + escapeHtml(e.meaning) + '</div>' +
       '<div class="detail-meta">' + chipsHtml(e) + '<span class="cat-mono">' + CAT_LABEL[e.category] + '</span></div>' +
       (e.notes ? '<div class="detail-notes">' + escapeHtml(e.notes) + '</div>' : '');
+    var ants = antList(e);
+    if (ants.length) {
+      html += '<h3 class="detail-h">反義詞 <span class="detail-sub">opposite</span></h3><div class="entry-list">';
+      ants.forEach(function(a){ var ae = findVocabBase(a); html += ae ? rowHtml(ae, true) : '<p class="num-note">' + escapeHtml(a) + '</p>'; });
+      html += '</div>';
+    }
     if (conj) {
       html += '<h3 class="detail-h">活用 <span class="detail-sub">' + escapeHtml(conj.kind) + '</span></h3><table class="conj-table">';
       conj.rows.forEach(function(row){
@@ -2167,6 +2286,7 @@
     {chip:"〜分", title:"分（〜分）", note:"ふん／ぷん交替", rows:[["1分","いっぷん",1],["2分","にふん",0],["3分","さんぷん",1],["4分","よんぷん",1],["5分","ごふん",0],["6分","ろっぷん",1],["7分","ななふん",0],["8分","はっぷん",1],["9分","きゅうふん",0],["10分","じゅっぷん",1],["30分","さんじゅっぷん／半",0],["何分","なんぷん",1]]},
     {chip:"〜月", title:"月份（〜月）", note:"4月・7月・9月不規則", rows:[["1月","いちがつ",0],["2月","にがつ",0],["3月","さんがつ",0],["4月","しがつ",1],["5月","ごがつ",0],["6月","ろくがつ",0],["7月","しちがつ",1],["8月","はちがつ",0],["9月","くがつ",1],["10月","じゅうがつ",0],["11月","じゅういちがつ",0],["12月","じゅうにがつ",0],["何月","なんがつ",0]]},
     {chip:"〜日", title:"日期（〜日）", note:"1〜10日全部不規則，14・20・24日也要背", rows:[["1日","ついたち",1],["2日","ふつか",1],["3日","みっか",1],["4日","よっか",1],["5日","いつか",1],["6日","むいか",1],["7日","なのか",1],["8日","ようか",1],["9日","ここのか",1],["10日","とおか",1],["11日","じゅういちにち",0],["14日","じゅうよっか",1],["17日","じゅうしちにち",0],["19日","じゅうくにち",0],["20日","はつか",1],["24日","にじゅうよっか",1],["27日","にじゅうしちにち",0],["何日","なんにち",0]]},
+    {chip: "〜日間", title: "天數（〜日・〜日間）", note: "一天是いちにち（不是ついたち）；二天以上跟日期讀法一樣，可以加「間」。過去問：4日間、六日間", rows: [["1日", "いちにち", 1], ["2日（間）", "ふつか（かん）", 1], ["3日（間）", "みっか（かん）", 1], ["4日（間）", "よっか（かん）", 1], ["5日（間）", "いつか（かん）", 1], ["6日（間）", "むいか（かん）", 1], ["7日（間）", "なのか（かん）", 1], ["8日（間）", "ようか（かん）", 1], ["9日（間）", "ここのか（かん）", 1], ["10日（間）", "とおか（かん）", 1], ["14日（間）", "じゅうよっか（かん）", 1], ["20日（間）", "はつか（かん）", 1], ["何日（間）", "なんにち（かん）", 0]]},
     {chip:"〜時間", title:"時間長度（〜時間）", note:"跟〜時一樣：4・7・9注意", rows:[["1時間","いちじかん",0],["2時間","にじかん",0],["3時間","さんじかん",0],["4時間","よじかん",1],["5時間","ごじかん",0],["6時間","ろくじかん",0],["7時間","しちじかん／ななじかん",1],["8時間","はちじかん",0],["9時間","くじかん",1],["10時間","じゅうじかん",0],["何時間","なんじかん",0]]},
     {chip:"〜週間", title:"星期長度（〜週間）", rows:[["1週間","いっしゅうかん",1],["2週間","にしゅうかん",0],["3週間","さんしゅうかん",0],["4週間","よんしゅうかん",0],["5週間","ごしゅうかん",0],["6週間","ろくしゅうかん",0],["7週間","ななしゅうかん",0],["8週間","はっしゅうかん",1],["9週間","きゅうしゅうかん",0],["10週間","じゅっしゅうかん",1],["何週間","なんしゅうかん",0]]},
     {chip:"〜か月", title:"月數（〜か月）", rows:[["1か月","いっかげつ",1],["2か月","にかげつ",0],["3か月","さんかげつ",0],["4か月","よんかげつ",0],["5か月","ごかげつ",0],["6か月","ろっかげつ",1],["7か月","ななかげつ",0],["8か月","はちかげつ／はっかげつ",1],["9か月","きゅうかげつ",0],["10か月","じゅっかげつ",1],["何か月","なんかげつ",0]]},
@@ -2227,7 +2347,7 @@
       if (s.note) html += '<p class="num-note">' + escapeHtml(s.note) + '</p>';
       html += '<div class="num-grid">';
       s.rows.forEach(function(r){
-        html += '<div class="num-cell"><span class="num-written">' + escapeHtml(r[0]) + '</span><span class="num-reading' + (r[2] ? ' irr' : '') + '">' + escapeHtml(r[1]) + '</span>' + speakerBtn(String(r[1]).split("／")[0]) + '</div>';
+        html += '<div class="num-cell"><span class="num-written">' + escapeHtml(r[0]) + '</span><span class="num-reading' + (r[2] ? ' irr' : '') + '">' + escapeHtml(r[1]) + '</span>' + speakerBtn(String(r[1]).split("／")[0].replace(/[（）]/g, "")) + '</div>';
       });
       html += '</div>';
     });
@@ -2248,7 +2368,7 @@
       var html = '<div class="quiz-summary"><div class="big-score">' + d.score + ' / ' + d.questions.length + '</div>';
       if (d.missed.length) {
         html += '<p class="count-note">要再看一次：</p><ul>';
-        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.written) + '</strong> ＝ <span class="irr-mark">' + escapeHtml(m.reading) + '</span> <span class="detail-sub">' + escapeHtml(m.section) + '</span> ' + speakerBtn(m.reading.split("／")[0]) + '</li>'; });
+        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.written) + '</strong> ＝ <span class="irr-mark">' + escapeHtml(m.reading) + '</span> <span class="detail-sub">' + escapeHtml(m.section) + '</span> ' + speakerBtn(m.reading.split("／")[0].replace(/[（）]/g, "")) + '</li>'; });
         html += '</ul>';
       } else {
         html += '<p class="count-note">全對——完璧です！</p>';
@@ -2284,7 +2404,7 @@
           if (b2.getAttribute("data-r") === q.item.reading) { b2.classList.add("correct"); mk.textContent = "◯"; }
           else if (b2.getAttribute("data-r") === chosen) { b2.classList.add("wrong"); mk.textContent = "✗"; }
         });
-        speak(q.item.reading.split("／")[0]);
+        speak(q.item.reading.split("／")[0].replace(/[（）]/g, ""));
         document.getElementById("numNextWrap").style.display = "block";
       });
     });
@@ -2377,6 +2497,7 @@
       '<button class="pack-card" id="packQR"><span class="pack-jp">即時応答</span><span class="pack-en">Quick Response · ' + LISTEN_QR.length + ' 題</span><span class="pack-desc">聽一句話，從三個「用聽的」回應中選出正確的——選項不會先顯示文字，跟真實考試一樣。</span></button>' +
       '<button class="pack-card" id="packConv"><span class="pack-jp">会話</span><span class="pack-en">Conversations · ' + LISTEN_CONV.length + ' 題</span><span class="pack-desc">聽一段兩人對話（男女聲音不同），回答 JLPT 式問題，答完可逐句重播＋中譯。</span></button>' +
     '</div>';
+    html += '<div class="pack-grid"><button class="pack-card" id="packQP"><span class="pack-jp">設問パターン</span><span class="pack-en">Question patterns · 過去問</span><span class="pack-desc">聽力常見問句已移到「設問」分頁：依考試題型整理，附中文翻譯和練習。</span></button></div>';
     html += '<h3 class="detail-h">真人語音資源</h3><div class="native-links">' +
       '<a href="https://youtube.com/playlist?list=PLkGU7DnOLgRMl-h4NxxrGbK-UdZHIXzKQ" target="_blank" rel="noopener">▶ The Nihongo Nook — N5 聴解 Practice Tests（59部影片）</a>' +
       '<a href="https://www.jlpt.jp/e/samples/sample09.html" target="_blank" rel="noopener">▶ JLPT 官方 N5 樣題＋聽力音檔（免費）</a>' +
@@ -2385,8 +2506,116 @@
     document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
     document.getElementById("packQR").addEventListener("click", function(){ qrDrill = buildListenDrill(LISTEN_QR); listenView = "qr"; renderListening(); });
     document.getElementById("packConv").addEventListener("click", function(){ convDrill = buildListenDrill(LISTEN_CONV); listenView = "conv"; renderListening(); });
+    document.getElementById("packQP").addEventListener("click", function(){ qpFilter = "聴解12"; activateTab(tabsNav.querySelector('button[data-tab="patterns"]')); });
     updateFooterCount();
   }
+  // ---------- 設問 Question patterns (past papers, merged with the old common-questions list) ----------
+  var QP_SECS = [["指示", "指示文"], ["語彙", "文字・語彙"], ["文法", "文法"], ["読解", "読解"], ["聴解12", "聴解 1・2"], ["聴解3", "聴解 3"], ["聴解4", "聴解 4"], ["訊號", "訊號詞"]];
+  var QP_GROUPS = [{"sec": "指示", "title": "考試指示文", "tip": "每一份考卷的指示文幾乎一樣。先記住意思，考試時看到就知道要做什麼。", "pats": [["＿＿の ことばは ひらがなで どう かきますか。", "劃線的詞用平假名怎麼寫？（漢字讀音）", [["＿＿の ことばは どう よみますか。", "劃線的詞怎麼唸？（2009 的說法）"]], "09 12 18", ""], ["＿＿の ことばは どう かきますか。", "劃線的詞要怎麼寫？（選漢字或片假名）", [], "09 12 18", ""], ["（　）に なにを いれますか。", "（　）裡要填什麼？", [["（　）に なにが はいりますか。", "（　）裡會放進什麼？（2018 的說法）"]], "09 12 18", ""], ["＿＿の ぶんと だいたい おなじ いみの ぶんが あります。", "有一個句子和劃線的句子意思大致相同，請選出來。", [], "09 12 18", ""], ["★ に 入る ものは どれですか。", "★ 的位置要放哪一個？", [], "09 12 18", "先把四個詞排成句子，再看 ★ 是第幾個。"], ["ぶんしょうの いみを かんがえて、（　）に 何を 入れますか。", "想想文章的意思，（　）裡要填什麼？", [], "12 18", ""], ["つぎの ぶんしょうを 読んで、しつもんに こたえて ください。", "讀下面的文章，回答問題。", [["つぎの ぶんを 読んで しつもんに こたえて ください。", "讀下面的句子，回答問題。（2009 的說法）"]], "09 12 18", ""], ["右の ページを 見て、下の しつもんに こたえて ください。", "看右邊那一頁，回答下面的問題。（情報検索）", [], "12 18", ""], ["はじめに しつもんを きいて ください。それから はなしを きいて ください。", "先聽問題，再聽對話。（聴解 1・2）", [], "18", "問題會播兩次：對話前一次、對話後一次。"], ["えを みながら しつもんを きいて ください。やじるしの ひとは なんと いいますか。", "一邊看圖一邊聽問題。箭頭指的人要說什麼？（聴解 3）", [], "18", ""], ["えなどが ありません。ぶんを きいて、いちばん いい ものを えらんで ください。", "沒有圖。聽句子，選出最好的回答。（聴解 4）", [], "18", ""], ["１・２・３・４から いちばん いい ものを ひとつ えらんで ください。", "從1・2・3・4中選出一個最好的。", [], "09 12 18", ""]]}, {"sec": "語彙", "title": "文字・語彙：考什麼、陷阱在哪", "tip": "四個部分：漢字讀音、寫法、依句意選詞、同義句。下面是每部分最常見的陷阱，例句是筆記本自己寫的。", "pats": [["漢字讀音：長音（う）", "せんしゅ／せんしゅう 這種差一個「う」的選項", [["来週 → らいしゅう", "下週"], ["学校 → がっこう", "學校"]], "12", ""], ["漢字讀音：促音（っ）", "ろくぽん／ろっぽん 這種有沒有小「っ」", [["六本 → ろっぽん", "六支"], ["三つ → みっつ", "三個"]], "12 18", ""], ["漢字讀音：清音或濁音", "はんふん／はんぶん、てんき／でんき", [["半分 → はんぶん", "一半"], ["元気 → げんき", "有精神"], ["電気 → でんき", "電燈"]], "09 12 18", ""], ["寫法：字形相近的漢字", "見／貝、会／公、来／未", [["みて → 見て（不是 貝て）", "看"], ["かいしゃ → 会社（不是 公社）", "公司"], ["らいげつ → 来月（不是 未月）", "下個月"]], "12 18", ""], ["寫法：片假名相似字", "シ／ツ、ソ／ン、ワ／ウ、ル／レ", [["しゃわー → シャワー", "淋浴"], ["わいしゃつ → ワイシャツ", "襯衫"], ["ほてる → ホテル", "飯店"]], "09 12 18", ""], ["依句意選詞：量詞・單位", "（　）裡放量詞或單位", [["わたしの へやは 3（かい）です。", "我的房間在3樓。"], ["500（メートル） およぎました。", "游了500公尺。"]], "12 18", ""], ["依句意選詞：動詞", "看受詞決定動詞", [["ナイフで パンを（きって）ください。", "請用刀切麵包。"], ["ギターを（ひきます）。", "彈吉他。"], ["かぜが（ふいて）います。", "風在吹。"]], "12 18", ""], ["依句意選詞：看前半句的原因", "〜から、（　）です", [["そうじを したから、へやは（きれい）です。", "打掃過了，所以房間很乾淨。"], ["となりの へやが（うるさい）です。", "隔壁房間很吵。"]], "09 12 18", ""], ["同義句：反義詞＋否定", "＿＿＝反義詞的否定", [["くらい ＝ あかるくない", "暗＝不亮"], ["つまらない ＝ おもしろくない", "無聊＝不有趣"]], "12 18", "反義詞清單在語彙分頁，每個形容詞下面的 ⇄。"], ["同義句：時間說法", "昨晚、前天、去年、每天晚上", [["ゆうべ ＝ きのうの よる", "昨晚"], ["おととし ＝ にねんまえ", "前年＝兩年前"], ["まいばん ＝ よるは いつも", "每天晚上"]], "09 12 18", ""], ["同義句：家人說法", "雙親、祖父母", [["りょうしん ＝ ちちと はは", "雙親＝爸爸和媽媽"], ["そふと そぼ ＝ おじいさんと おばあさん", "祖父母"]], "18", ""], ["同義句：授受方向互換", "かす⇄かりる、あげる⇄もらう", [["Aさんは Bさんに かしました ＝ Bさんは Aさんに かりました", "A借給B＝B向A借"], ["Aさんは Bさんに あげました ＝ Bさんは Aさんに もらいました", "A給B＝B從A收到"]], "18", ""], ["同義句：工作・洗衣", "つとめる＝はたらく、せんたくする＝あらう", [["ぎんこうに つとめて います ＝ ぎんこうで はたらいて います", "在銀行工作"], ["シャツを せんたくしました ＝ シャツを あらいました", "洗了襯衫"]], "09 18", ""]]}, {"sec": "文法", "title": "文法：考什麼", "tip": "もんだい1 選助詞・疑問詞・副詞・動詞形；もんだい2 排序（★）；もんだい3 文章填空。例句是筆記本自己寫的。", "pats": [["［名詞］（　）［動詞］：選助詞", "に・を・で・へ・が・と・や 的分辨", [["友だち（に）会いました。", "見了朋友。"], ["7時に うち（を）出ます。", "七點出門。"], ["バス（で）学校へ 行きます。", "搭公車去學校。"], ["父（が）作った いす", "爸爸做的椅子"]], "09 12 18", ""], ["數量＋で／ぐらい", "全部で、〜ぐらい", [["五つ（で）500円です。", "五個500圓。"], ["空港まで バスで 2時間（ぐらい）です。", "到機場搭公車大約2小時。"]], "12 18", ""], ["AはBより〜／Aのほうが", "比較", [["姉は 私（より） 背が 高いです。", "姊姊比我高。"]], "12", ""], ["疑問詞：どこ・いかが・何か", "看回答選疑問詞", [["旅行は（いかが）でしたか。", "旅行怎麼樣？"], ["（どこ）で 買いましたか。", "在哪裡買的？"], ["（何か） 飲みませんか。", "要不要喝點什麼？"]], "12 18", ""], ["副詞：まだ・もう・また・あまり", "副詞要和後面的形式配合", [["いいえ、（まだ）です。", "不，還沒。"], ["じゃ、（また） あした。", "那明天見。"], ["さいきん（あまり） テレビを 見ません。", "最近不太看電視。"]], "12 18", ""], ["動詞形：〜ながら・〜てから・〜まえに", "接續的動詞形", [["音楽を 聞き（ながら） 勉強します。", "一邊聽音樂一邊唸書。"], ["うちに かえって（から） 何を しましたか。", "回家後做了什麼？"], ["食べる（まえに） 手を あらいます。", "吃之前洗手。"]], "09 12 18", ""], ["會話的固定說法", "店裡、電話、邀請", [["（電話で）山田さんを おねがいします。", "（電話）請找山田先生。"], ["りんごの ジュースを 二つ ください。", "請給我兩杯蘋果汁。"], ["リンさんも いっしょに 行きませんか。", "林先生也要一起去嗎？"]], "12 18", ""], ["授受：あげる・もらう・くれる", "誰給誰", [["この 時計は 兄に（もらいました）。", "這支錶是從哥哥那收到的。"]], "12", ""], ["★ 排序：修飾語放在名詞前面", "名詞修飾和語順", [["きのう 母が 作った ケーキ", "昨天媽媽做的蛋糕"], ["駅の 近くに ある 本屋", "車站附近的書店"], ["日曜日に 公園で とった しゃしん", "星期天在公園拍的照片"]], "09 12 18", ""], ["文章填空：接續詞", "でも・だから・それから・そして", [["…好きです。でも、あまり 上手じゃ ありません。", "…喜歡。但是不太擅長。"], ["…雨でした。だから、うちに いました。", "…下雨。所以待在家。"]], "09 12 18", ""], ["文章填空：時態・請求", "過去還是現在、〜てください", [["先週 京都へ 行きました。", "上週去了京都。"], ["みなさんも ぜひ 来て ください。", "大家也一定要來。"]], "09 12 18", ""]]}, {"sec": "読解", "title": "読解：問題怎麼問", "tip": "先看問題再讀文章。注意「はじめに」「〜あとで」「どうして」：答案常在「〜から」前面或「でも」後面。", "pats": [["「わたし」は ［時］、何を しましたか。", "「我」（某時）做了什麼？", [["「わたし」は きのう、何を しましたか。", "「我」昨天做了什麼？"], ["「わたし」は けさ、何を 食べましたか。", "「我」今天早上吃了什麼？"]], "12 18", "「でも、けさは〜」：今天和平常不一樣。"], ["［人］は はじめに 何を しますか。", "［人］首先要做什麼？", [["メモを 読んで、リンさんは はじめに 何を しますか。", "讀了便條，林先生首先要做什麼？"]], "18", "便條裡「〜前に」的事要先做。"], ["［人］は ［〜た あとで］、［物］を どうしますか。", "［人］做完…之後，［物］要怎麼處理？", [["しょくじの あとで、さらを どうしますか。", "吃完飯後，盤子怎麼處理？"]], "12", ""], ["［人］は あした どうしますか。", "［人］明天要怎麼做？", [["「わたし」は あした どうしますか。", "「我」明天要怎麼做？"]], "12", ""], ["どうして ＿＿〜ましたか。", "為什麼（劃線部分）…？", [["どうして こまりましたか。", "為什麼傷腦筋？"], ["どうして 早く 起きましたか。", "為什麼早起？"]], "12 18", "理由在劃線部分的前一句或前一段。"], ["［人］は 何を まちがえましたか。", "［人］弄錯了什麼？", [["田中さんは 何を まちがえましたか。", "田中弄錯了什麼？"]], "18", "答案常在最後一句。"], ["［だれ］は ［だれ］に 何が 言いたいですか。", "（公告・通知）想對誰說什麼？", [["学校は 学生に 何が 言いたいですか。", "學校想對學生說什麼？"]], "18", ""], ["［人］は いつ 時間が ありますか。", "［人］什麼時候有空？", [["先生は いつ 時間が ありますか。", "老師什麼時候有空？"]], "09", ""], ["［場所］から いちばん 近い ［物］は どれですか。", "離［場所］最近的［物］是哪一個？", [["駅から いちばん 近い 店は どれですか。", "離車站最近的店是哪一間？"]], "09", "となり＞まえ＞ちかく：畫一張小地圖。"], ["今の ［物］は どれですか。", "（看圖）現在的［物］是哪一個？", [["今の へやは どれですか。", "現在的房間是哪一個？"]], "12", "「〜がほしいです」是還沒有的東西。"], ["［人］は 今日 どこへ 行きますか。", "［人］今天要去哪裡？", [["リンさんは 今日 どこへ 行きますか。", "林先生今天要去哪裡？"]], "09", ""], ["［乗り物］は どれに 乗りますか。／どの 行き方で 行きますか。", "要搭哪一班？用哪一種走法去？", [["電車は どれに 乗りますか。", "要搭哪一班電車？"], ["マリアさんは どの 行き方で 行きますか。", "瑪莉亞用哪一種方式去？"]], "09 18", "先用條件刪去（錢、時間），再比較。"], ["〜たいです。いつが 安いですか。", "想〜。哪一天比較便宜？（看傳單）", [["パンと 牛乳を 同じ 日に 買いたいです。いつが 安いですか。", "想同一天買麵包和牛奶，哪天便宜？"]], "12", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：何を（要做什麼）", "tip": "最常見的題型。對話中常改變主意，要聽最後決定的那件事。問「はじめに／まず」就是問第一件事。", "pats": [["［人］は これから 何を しますか。", "［人］接下來要做什麼？", [["男の人は これから 何を しますか。", "男的接下來要做什麼？"], ["女の人は このあと 何を しますか。", "女的之後要做什麼？"]], "", ""], ["［人］は はじめに／まず 何を しますか。", "［人］首先要做什麼？", [["男の人は はじめに 何を しますか。", "男的首先要做什麼？"], ["女の人は まず 何を しますか。", "女的首先要做什麼？"]], "09 12", ""], ["［人］は ［時］、何を しますか。", "［人］（某時）要做什麼？", [["二人は 日曜日に 何を しますか。", "兩個人星期天要做什麼？"], ["男の人は あしたの 午前、何を しますか。", "男的明天上午要做什麼？"]], "09 18", ""], ["［人］は 何を 持って いきますか。", "［人］要帶什麼去？", [["学生は あした 何を 持って いきますか。", "學生明天要帶什麼去？"], ["男の人は パーティーに 何を 持って いきますか。", "男的要帶什麼去派對？"]], "12 18", "聽清楚是誰帶；「〜は重いから着いてから買う」要刪掉。"], ["［人］は ［場所］に／から 何を ［動詞］ますか。", "［人］在／從［場所］［做］什麼？", [["学生は つくえの 上に 何を おきますか。", "學生在桌上放什麼？"], ["女の人は かばんから 何を 出しますか。", "女的從包包拿出什麼？"]], "12 18", "中途改數量或加東西：聽到最後。"], ["［人］は 何を 買いますか／食べますか。", "［人］要買／吃什麼？", [["男の人は 何を 買いますか。", "男的要買什麼？"], ["女の人は 何を 食べますか。", "女的要吃什麼？"]], "", ""], ["［人］は 何の ［物］を 作りましたか。", "［人］做了什麼的［物］？", [["女の人は 何の ケーキを 作りましたか。", "女的做了什麼蛋糕？"]], "18", "「〜と〜を少し」也算在裡面。"], ["［人］は ［時］、何を しましたか。", "［人］（某時）做了什麼？", [["男の人は きのう、何を しましたか。", "男的昨天做了什麼？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：どこ（哪裡）", "tip": "注意方位詞（前・隣・中）和「〜じゃなくて」的更正。「どこで」問動作地點，「どこへ」問目的地，「どこに」問存在位置。", "pats": [["［人］は どこへ 行きますか／行きましたか。", "［人］要去／去了哪裡？", [["男の人は どこへ 行きますか。", "男的要去哪裡？"], ["女の人は きのう どこへ 行きましたか。", "女的昨天去了哪裡？"]], "09 12 18", "對話常有兩個人兩個地點：問的是哪一個人。"], ["［人］は ［場所］で、どこを 勉強しますか。", "［人］在［場所］要唸哪裡（哪一頁）？", [["学生は うちで、どこを 勉強しますか。", "學生在家要唸哪部分？"]], "09 12 18", "聽「〜まで終わりました」和「〜番」。"], ["二人は どこで ［動詞］ますか。", "兩個人在哪裡［做］？", [["二人は どこで 会いますか。", "兩個人在哪裡見面？"], ["二人は どこで ばんごはんを 食べますか。", "兩人在哪裡吃晚餐？"], ["男の人は きのう どこで 昼ご飯を 食べましたか。", "男的昨天在哪裡吃午餐？"]], "12", "第一個提議常被否定（人が多い、休み），聽最後的決定。"], ["［物］は どこに ありますか。", "［物］在哪裡？", [["本屋は どこに ありますか。", "書店在哪裡？"], ["女の人は かばんを どこに 置きますか。", "女的把包包放在哪裡？"]], "", ""], ["［人］は どの ［場所］に 行きますか。", "［人］要去哪一間［場所］？", [["学生は 午後 どの 教室に 行きますか。", "學生下午要去哪間教室？"]], "18", "問「午前」還是「午後」要聽清楚。"], ["何の 店に ［〜に］ 行きますか。", "去什麼店［做…］？", [["こんばん 何の 店に ごはんを 食べに 行きますか。", "今晚去什麼店吃飯？"]], "18", "原本的店休息時，會改去別家。"]]}, {"sec": "聴解12", "title": "聴解 1・2：いつ・何時・何曜日・何日（時間）", "tip": "數字讀音是關鍵：4時よじ、7時しちじ、9時くじ、1日ついたち〜10日とおか、20日はつか。對話常先說一個時間再改。", "pats": [["［人］は 何日に ［動詞］ますか。", "［人］幾號［做］？", [["学生は 何日に 学校に 来ますか。", "學生幾號來學校？"], ["女の人の たんじょうびは 何月何日ですか。", "女的生日是幾月幾號？"]], "18", "「〜から〜まで休み」：隔天才是答案。"], ["［人］は 何曜日の ［物］で ［動詞］ますか。", "［人］在星期幾的［物］［做］？", [["男の人は 何曜日の クラスで 勉強しますか。", "男的上星期幾的課？"], ["テストは 何曜日ですか。", "考試是星期幾？"]], "18", "用刪去法：哪幾天不行、哪天時間短。"], ["二人は いつ 会いますか。", "兩個人什麼時候見面？", [["二人は いつ 会いますか。", "兩個人什麼時候見面？"]], "", ""], ["何時から 何時までですか。／何時に ［動詞］ましたか。", "從幾點到幾點？幾點［做］？", [["店は 何時から 何時までですか。", "店從幾點開到幾點？"], ["男の人は けさ 何時に 起きましたか。", "男的今天早上幾點起床？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：いくら・いくつ・何人・どのぐらい（數量）", "tip": "聽「全部で」（總共）和量詞。中途常會加減數量，最後的數字才是答案。", "pats": [["［人］は 一日に 何回 ［動詞］ますか。", "［人］一天［做］幾次？", [["男の人は 一日に 何回 くすりを 飲みますか。", "男的一天吃幾次藥？"]], "12", "「朝と夜」＝2回；「昼は飲まないで」要減掉。"], ["［人］は 何時間 ［動詞］ますか。", "［人］［做］幾個小時？", [["男の学生は 今日 何時間 勉強しますか。", "男學生今天唸幾小時？"]], "12", "平常的時間和「今日」不一樣。"], ["［A］から［B］まで、何時間／どのぐらい かかりますか。", "從A到B要多久？", [["うちから 駅まで どのぐらい かかりますか。", "從家到車站要多久？"], ["東京から 大阪まで 何時間 かかりますか。", "從東京到大阪要幾小時？"]], "18", "「1時間半早い」這種比較要自己算。"], ["［人］は ［家族］が 何人 いますか。", "［人］有幾個［家人］？", [["女の人は 姉が 何人 いますか。", "女的有幾個姊姊？"], ["男の人は 兄弟が 何人 いますか。", "男的有幾個兄弟姊妹？"]], "18", "別人的小孩人數是陷阱。"], ["［物］は 何番ですか。／何番の ［乗り物］に 乗りますか。", "［物］幾號？搭幾號［車］？", [["男の人の へやは 何番ですか。", "男的房間幾號？"], ["男の人は 何番の バスに 乗りますか。", "男的搭幾號公車？"]], "12", "號碼常被更正：「〜じゃなくて〜」。"], ["全部で いくらですか。／いくつ 買いますか。", "總共多少錢？買幾個？", [["全部で いくらですか。", "總共多少錢？"], ["女の人は りんごを いくつ 買いますか。", "女的買幾顆蘋果？"]], "", ""], ["何人 来ますか。／何枚 ［動詞］ますか。", "幾個人來？［做］幾張？", [["パーティーに 何人 来ますか。", "派對有幾個人來？"], ["男の人は 何枚 コピーしますか。", "男的要影印幾張？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：どれ・どの・どんな（哪一個）", "tip": "通常搭配圖片。聽形容詞（大きい・黒い・長い）和「〜のほう」，常有兩個條件都要對。", "pats": [["［人］は どの ［物］を ［動詞］ますか。", "［人］［做］哪一個［物］？", [["女の人は どの ぼうしを 買いますか。", "女的買哪頂帽子？"], ["店の人は どの くつを 取りますか。", "店員拿哪雙鞋？"], ["男の人は どの 本を 女の人に わたしますか。", "男的把哪本書交給女的？"]], "12 18", "大小／長短＋顏色／圖案：兩個條件都要對。"], ["［人］の ［家族］は どの 人ですか。", "［人］的［家人］是哪一位？", [["山田さんの お兄さんは どの 人ですか。", "山田的哥哥是哪一位？"]], "09", "聽外表：眼鏡・帽子・長髮。"], ["［人］の ［物］は どれですか。", "［人］的［物］是哪一個？", [["女の人の かばんは どれですか。", "女的包包是哪一個？"], ["男の人の へやは どれですか。", "男的房間是哪一個？"]], "", ""], ["どんな ［人／物］ですか。", "是什麼樣的［人／物］？", [["新しい 先生は どんな 人ですか。", "新老師是什麼樣的人？"]], "", ""], ["［人］は どの ［乗り物］に 乗りますか。", "［人］搭哪一班［車］？", [["男の人は どの 電車に 乗りますか。", "男的搭哪一班電車？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：何で・どうやって（方法・交通）", "tip": "「何で」在這裡問方式（搭什麼、用什麼）。常出現「前は〜でしたが、今は〜」。", "pats": [["［人］は 何で ［場所］に 来て いますか。", "［人］（平常）怎麼來［場所］？", [["女の人は 何で 学校に 来て いますか。", "女的平常怎麼來學校？"], ["二人は 何で 京都へ 行きますか。", "兩人怎麼去京都？"]], "18", "問的是現在的方式。"], ["［人］は 何で ［物］を 書きますか。", "［人］用什麼寫［物］？", [["学生は 何で しゅくだいを 書きますか。", "學生用什麼寫作業？"]], "12", "「〜じゃなくて〜」後面的才是答案。"], ["どうやって 来ましたか。", "怎麼來的？", [["女の人は どうやって 学校へ 来ましたか。", "女的是怎麼來學校的？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：どうして（為什麼）", "tip": "答案通常在「〜から」前面。問的是誰的理由，要聽清楚主語。", "pats": [["［人］は どうして ［動詞］ませんか／ましたか。", "［人］為什麼（不）［做］？", [["男の人は どうして パーティーに 行きませんか。", "男的為什麼不去派對？"], ["女の人は どうして おそく なりましたか。", "女的為什麼遲到？"], ["男の人は どうして きのう 学校を 休みましたか。", "男的昨天為什麼沒去學校？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：だれ（誰）", "tip": "「だれが」問做的人，「だれと」問一起的人，「だれに」問對象，「だれの」問所有者。", "pats": [["［人］は だれと ［動詞］ますか。", "［人］和誰［做］？", [["女の学生は だれと 住んで いますか。", "女學生和誰住？"], ["女の人は だれと 旅行に 行きましたか。", "女的和誰去旅行？"]], "12", "家人住哪裡要分清楚。"], ["だれが／だれに／だれの", "誰做的／從誰／誰的", [["だれが りょうりを 作りましたか。", "是誰做的菜？"], ["男の人は だれに プレゼントを もらいましたか。", "男的從誰那裡收到禮物？"], ["これは だれの かさですか。", "這是誰的傘？"]], "", ""]]}, {"sec": "聴解12", "title": "聴解 1・2：どうですか（狀況・感想）", "tip": "聽形容詞和它的過去式、否定式（よかった、あまり〜なかった）。", "pats": [["［物］は どうでしたか／どうなりますか。", "［物］怎麼樣？會怎麼樣？", [["旅行は どうでしたか。", "旅行怎麼樣？"], ["あしたの 天気は どうなりますか。", "明天天氣會怎麼樣？"], ["男の人は 今、どんな 気持ちですか。", "男的現在是什麼心情？"]], "", ""]]}, {"sec": "聴解3", "title": "聴解 3：這時候說什麼（発話表現）", "tip": "先聽懂場面（誰、在哪、想做什麼），再選最自然的一句。每題都問「何と言いますか」。", "pats": [["［場面］。何と 言いますか。", "［某情境］。要說什麼？", [["何と 言いますか。", "要說什麼？"]], "09 12 18", ""], ["［人］に 何と 言いますか。", "對［人］要說什麼？", [["店の 人に 何と 言いますか。", "對店員要說什麼？"], ["先生に 何と 言いますか。", "對老師要說什麼？"]], "12 18", ""], ["［場所］で ［人］を 呼びます。", "在［場所］叫［人］", [["きっさてんで 店の 人を 呼びます。", "在咖啡廳叫店員。"]], "09 12 18", "→ すみません。"], ["［物］を ［動詞］たいです。", "想［做…］", [["友だちの かさを 使いたいです。", "想用朋友的傘。"], ["友だちと いっしょに 帰りたいです。", "想和朋友一起回去。"]], "09 18", "借東西 → 〜を貸してください；一起做 → 〜ましょう。"], ["［人］に ［物］を あげます。", "要給［人］［物］", [["友だちに お菓子を あげます。", "要送朋友點心。"], ["先生に 花を あげます。", "要送老師花。"]], "18", "→ 〜、いかがですか／どうぞ。"], ["［人］は ［物］が ありません。", "［人］沒有［物］", [["友だちは ペンが ありません。", "朋友沒有筆。"]], "12", "→ 〜、使いますか。（借出去的說法）"], ["［場所］で ［物］を 買います。", "在［場所］買［物］", [["駅で きっぷを 買います。", "在車站買車票。"]], "12", "→ 〜を ください。"], ["あいさつの 場面", "打招呼：吃飯前後、分開、進房間", [["ごはんを 食べました。", "吃完飯了。（→ ごちそうさまでした）"], ["友だちと わかれます。", "要和朋友分開了。（→ じゃ、また）"], ["先生の へやに 入ります。", "要進老師的房間。（→ 失礼します）"]], "12", ""], ["ちゅうい・さいそく", "提醒、催促", [["友だちの 前に 車が 来ました。", "有車子朝朋友過來。（→ あぶないですよ）"], ["たのんだ 料理が 来ません。", "點的菜還沒來。（→ まだですか）"]], "18", ""], ["せきを ゆずる", "讓座", [["電車の 中です。おばあさんが 来ました。", "在電車上，有位老太太來了。（→ ここ、どうぞ）"]], "12", ""]]}, {"sec": "聴解4", "title": "聴解 4：聽一句，選回答（即時応答）", "tip": "沒有圖。先抓疑問詞：いつ→時間點、どこ→地點、何時の→幾點的、もう→まだです／今からです。", "pats": [["お国は どちらですか。", "您是哪國人？", [], "09 12 18", "→ 國名，不是方向（あちら）。"], ["いつ ［動詞］ましたか。", "什麼時候［做］的？", [["いつ この 町に 来ましたか。", "什麼時候來這個城市的？"]], "18", "→ 時間點（去年），不是期間（3か月）。"], ["今日は 何日ですか。", "今天幾號？", [["今日は 何曜日ですか。", "今天星期幾？"]], "12", "→ 日期（三日），不是期間（3週間）。"], ["何時に ［動詞］ますか。", "幾點［做］？", [["あした 何時に 会社に 来ますか。", "明天幾點來公司？"]], "12", "→ 時刻（9時半），不是方法或人數。"], ["何時の ［乗り物］に 乗りますか。", "搭幾點的［交通工具］？", [["何時の 電車に 乗りますか。", "搭幾點的電車？"], ["何時の バスに 乗りますか。", "搭幾點的公車？"]], "18", "→ 〜時の〜です，不是「〜で行きます」。"], ["［場所］は どこですか。", "［場所］在哪裡？", [["トイレは どこですか。", "廁所在哪裡？"]], "12", "→ あそこです。"], ["どこで 買いましたか。", "在哪裡買的？", [["その かさ、どこで 買いましたか。", "那把傘在哪買的？"]], "18", "→ 地點，或「わたしが作りました」。"], ["もう ［動詞］ましたか。", "已經［做］了嗎？", [["しゅくだいは もう しましたか。", "作業做了嗎？"]], "18", "→ いいえ、まだです／今からです。"], ["どこかへ 出かけましたか。", "有去哪裡嗎？", [["週末は どこかへ 行きましたか。", "週末有去哪裡嗎？"]], "18", "→ どこへも行きませんでした。"], ["［人］の ［物］を 知って いますか。", "你知道［人］的［物］嗎？", [["山田さんの うちを 知って いますか。", "你知道山田家在哪嗎？"]], "18", "→ はい、知っています／いいえ、知りません。"], ["それは 何の ［物］ですか。", "那是什麼（內容）的［物］？", [["それは 何の 雑誌ですか。", "那是什麼雜誌？"]], "12", "→ 内容（料理の〜），不是所有者（私の〜）。"], ["〜ましょうか。", "我來…好嗎？（提議幫忙）", [["かばんを 持ちましょうか。", "我幫你拿包包好嗎？"]], "12", "→ ありがとうございます／すみません、お願いします。"], ["〜ませんか。", "要不要…？（邀請）", [["いっしょに 帰りませんか。", "要不要一起回去？"]], "12", "→ そうしましょう／ええ、いいですね。"], ["［物］、どうぞ。", "請用［物］", [["コーヒー、どうぞ。", "請喝咖啡。"]], "09", "→ ありがとうございます。"]]}, {"sec": "訊號", "title": "訊號詞：聽到這些，答案常在後面", "tip": "對話轉折的地方：改主意、更正、追加、決定順序。", "pats": [["でも", "但是：後面才是重點", [["映画に 行きたいです。でも、今日は 時間が ありません。", "想去看電影，但是今天沒時間。"]], "", ""], ["やっぱり", "還是…：改變主意，後面是最後決定", [["コーヒーを ください。あ、やっぱり 紅茶を お願いします。", "請給我咖啡。啊，還是要紅茶。"]], "", ""], ["じゃ", "那麼：要做決定了", [["じゃ、三時に 駅で 会いましょう。", "那就三點在車站見。"]], "", ""], ["〜じゃなくて", "不是…而是…：更正", [["月曜日じゃなくて、火曜日です。", "不是星期一，是星期二。"]], "12", ""], ["〜は ちょっと…", "委婉的拒絕＝不行", [["土曜日は ちょっと…。", "星期六有點不方便…"]], "09", ""], ["それから", "然後、還有：追加的內容", [["牛乳を 買って ください。それから、卵も お願いします。", "請買牛奶，還有蛋。"]], "18", ""], ["〜だけ", "只有…", [["一つだけ ください。", "只要一個。"]], "", ""], ["全部で", "總共", [["全部で 千二百円です。", "總共1200圓。"]], "", ""], ["まず／はじめに", "首先：問第一件事時的答案", [["まず、手を 洗って ください。", "首先，請洗手。"]], "09 12", ""], ["〜てから", "做完…之後：決定順序", [["宿題を してから、遊びに 行きます。", "做完作業後去玩。"]], "12", ""], ["〜前に", "…之前：前面那件事先做", [["寝る前に、薬を 飲みます。", "睡前吃藥。"]], "18", ""], ["あ、すみません", "啊，不好意思：要更正前面說的", [["二つ ください。あ、すみません、三つ お願いします。", "請給我兩個。啊，抱歉，要三個。"]], "18", ""], ["次（つぎ）", "接下來、下一個", [["次は 何を しますか。", "接下來要做什麼？"]], "18", ""], ["もっと", "更…：比較的重點", [["もっと 安いのは ありますか。", "有更便宜的嗎？"]], "18", ""]]}];
+  var qpFilter = "", qpDrill = null;
+  function qpSpeakable(t){ return !/[［＿★（）〜／…]/.test(t); }
+  function qpAudio(t){ return String(t).replace(/（→[^）]*）/g, "").replace(/（[^）]*）/g, "").replace(/[→＝⇄]/g, "、").replace(/[［］＿★]/g, ""); }
+  function qpSrc(src){ return src ? '<span class="src-chip">過去問 ' + src.split(" ").map(function(y){ return "20" + y; }).join("・") + '</span>' : '<span class="src-chip soft">常見</span>'; }
+  function qpGroups(){ return QP_GROUPS.filter(function(g){ return !qpFilter || g.sec === qpFilter; }); }
+  function renderPatterns(){
+    if (qpDrill) { renderQPDrill(); return; }
+    stopSpeech();
+    var side = '<aside class="side-filter"><p class="side-title">題型 Section</p><div class="tagbar"><button class="tag-chip' + (qpFilter === "" ? " active" : "") + '" data-qs="">All</button>' +
+      QP_SECS.map(function(x){ return '<button class="tag-chip' + (qpFilter === x[0] ? " active" : "") + '" data-qs="' + x[0] + '">' + escapeHtml(x[1]) + '</button>'; }).join("") + '</div></aside>';
+    var gs = qpGroups(), nP = 0, nV = 0;
+    gs.forEach(function(g){ nP += g.pats.length; g.pats.forEach(function(p){ nV += p[2].length; }); });
+    var main = '<p class="count-note">過去問（2009・2012・2018）的問題整理成句型：［　］是可以替換的部分。' + nP + ' 個句型、' + nV + ' 個例句。點例句可以聽。</p>' +
+      '<div class="listen-controls"><button class="btn primary" id="qpDrillBtn">聽問句，選意思（10題）</button><label class="listen-slow"><input type="checkbox" id="slowToggle"' + (listenSlow ? ' checked' : '') + '> 慢速</label></div>';
+    gs.forEach(function(g){
+      var secName = QP_SECS.filter(function(x){ return x[0] === g.sec; })[0][1];
+      main += '<div class="p-card"><div class="p-head"><span class="qp-title">' + escapeHtml(g.title) + '</span><span class="seal-chip static">' + escapeHtml(secName) + '</span></div><p class="num-note">' + escapeHtml(g.tip) + '</p>';
+      g.pats.forEach(function(p){
+        main += '<div class="qp-pat"><div class="qp-tpl">' + escapeHtml(p[0]) + (qpSpeakable(p[0]) ? ' ' + speakerBtn(p[0]) : '') + '</div><div class="qp-zh">' + escapeHtml(p[1]) + ' ' + qpSrc(p[3]) + '</div>';
+        if (p[4]) main += '<div class="qp-note">提示：' + escapeHtml(p[4]) + '</div>';
+        if (p[2].length) {
+          main += '<div class="transcript">';
+          p[2].forEach(function(v){ main += '<button class="t-line" data-t="' + escapeHtml(qpAudio(v[0])) + '"><span class="t-jp">' + escapeHtml(v[0]) + '</span></button><p class="t-zh">' + escapeHtml(v[1]) + '</p>'; });
+          main += '</div>';
+        }
+        main += '</div>';
+      });
+      main += '</div>';
+    });
+    content.innerHTML = '<div class="list-layout"><div class="list-main">' + main + '</div>' + side + '</div>';
+    content.querySelectorAll("[data-qs]").forEach(function(c){ c.addEventListener("click", function(){ qpFilter = c.getAttribute("data-qs") || ""; renderPatterns(); }); });
+    document.getElementById("qpDrillBtn").addEventListener("click", function(){ startQPDrill(); renderPatterns(); });
+    document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
+    content.querySelectorAll(".t-line").forEach(function(tl){ tl.addEventListener("click", function(){ speakSeq([{t: tl.getAttribute("data-t"), p: 1}]); }); });
+    wireSpeakers();
+    updateFooterCount();
+  }
+  function qpPool(groups){
+    var pool = [];
+    groups.forEach(function(g){ g.pats.forEach(function(p){
+      if (qpSpeakable(p[0]) && p[1]) pool.push([p[0], p[1]]);
+      p[2].forEach(function(v){ if (v[1] && !/[→＝]/.test(v[0])) pool.push([v[0], v[1]]); });
+    }); });
+    return pool;
+  }
+  function startQPDrill(){
+    var pool = qpPool(qpGroups());
+    if (pool.length < 6) pool = qpPool(QP_GROUPS);
+    var seen = {};
+    pool = pool.filter(function(it){ if (seen[it[0]]) return false; seen[it[0]] = true; return true; });
+    var qs = shuffleArr(pool).slice(0, 10).map(function(it){
+      var ds = [], g = 0;
+      while (ds.length < 3 && g++ < 120) { var o = pick(pool)[1]; if (o !== it[1] && ds.indexOf(o) === -1) ds.push(o); }
+      return {jp: it[0], zh: it[1], options: shuffleArr([it[1]].concat(ds))};
+    });
+    qpDrill = {questions: qs, idx: 0, score: 0, answered: false, missed: []};
+  }
+  function renderQPDrill(){
+    var d = qpDrill;
+    if (d.idx >= d.questions.length) {
+      stopSpeech();
+      var html = '<div class="quiz-summary"><div class="big-score">' + d.score + ' / ' + d.questions.length + '</div>';
+      if (d.missed.length) {
+        html += '<p class="count-note">要再聽一次：</p><ul>';
+        d.missed.forEach(function(m){ html += '<li><strong>' + escapeHtml(m.jp) + '</strong> — ' + escapeHtml(m.zh) + '</li>'; });
+        html += '</ul>';
+      } else { html += '<p class="count-note">全對——完璧です！</p>'; }
+      html += '<div class="start-row"><button class="btn primary" id="qpAgain">再來一次</button> <button class="btn" id="qpList">回到句型表</button></div></div>';
+      content.innerHTML = html;
+      document.getElementById("qpAgain").addEventListener("click", function(){ startQPDrill(); renderPatterns(); });
+      document.getElementById("qpList").addEventListener("click", function(){ qpDrill = null; renderPatterns(); });
+      return;
+    }
+    var q = d.questions[d.idx];
+    var h = '<div class="quiz-feedback-row"><span class="quiz-q">設問 · 第 ' + (d.idx + 1) + ' 題／共 ' + d.questions.length + ' 題</span><span class="quiz-score-line">Score: ' + d.score + '</span></div>' +
+      '<div class="listen-controls"><button class="btn primary" id="qpPlay">▶ 再播放</button><label class="listen-slow"><input type="checkbox" id="slowToggle"' + (listenSlow ? ' checked' : '') + '> 慢速</label></div>' +
+      '<p class="count-note">這句在問什麼？（先聽，不看字）</p><div class="quiz-options">';
+    q.options.forEach(function(opt, i){ h += '<button class="quiz-opt" data-i="' + i + '">' + escapeHtml(opt) + '<span class="quiz-mark"></span></button>'; });
+    h += '</div><div id="qpReveal"></div><div class="start-row" id="qpNextWrap" style="display:none;"><button class="btn primary" id="qpNext">下一題</button></div>';
+    content.innerHTML = h;
+    var parts = [{t: qpAudio(q.jp), p: 1}];
+    document.getElementById("qpPlay").addEventListener("click", function(){ speakSeq(parts); });
+    document.getElementById("slowToggle").addEventListener("change", function(ev){ listenSlow = ev.target.checked; });
+    speakSeq(parts);
+    var btns = content.querySelectorAll(".quiz-opt");
+    btns.forEach(function(b){
+      b.addEventListener("click", function(){
+        if (d.answered) return;
+        d.answered = true;
+        var chosen = q.options[parseInt(b.getAttribute("data-i"), 10)];
+        if (chosen === q.zh) d.score++; else d.missed.push(q);
+        btns.forEach(function(b2){
+          b2.disabled = true;
+          var o2 = q.options[parseInt(b2.getAttribute("data-i"), 10)], mk = b2.querySelector(".quiz-mark");
+          if (o2 === q.zh) { b2.classList.add("correct"); mk.textContent = "◯"; }
+          else if (b2 === b) { b2.classList.add("wrong"); mk.textContent = "✗"; }
+        });
+        document.getElementById("qpReveal").innerHTML = '<p class="num-note"><span class="t-jp">' + escapeHtml(q.jp) + '</span></p>';
+        document.getElementById("qpNextWrap").style.display = "block";
+      });
+    });
+    document.getElementById("qpNext").addEventListener("click", function(){ d.idx++; d.answered = false; stopSpeech(); renderQPDrill(); });
+  }
+
   function renderListenDrill(d, kind){
     if (d.idx >= d.questions.length) {
       stopSpeech();
@@ -2950,83 +3179,13 @@
     });
   }
 
-  // ---------- Answer sheet for the 2018 official workbook (questions stay in the user's own copy) ----------
-  var SHEET = [{"id": "v", "title": "文字・語彙", "min": 25, "parts": [{"name": "もんだい1（漢字読み）", "start": 1, "opts": 4, "key": [4, 1, 3, 1, 3, 4, 1, 4, 2, 3, 2, 2], "notes": ["天氣詞的漢字讀音；其他選項是別的天氣", "て形的讀音；選項是字形相近的動詞", "方位詞的讀音", "い形容詞：長音的い不能少", "星期的讀音", "自然名詞的讀音", "數字＋人：不濁音，人讀にん", "動物・食物名詞的讀音", "ん後面要濁音（ぶ）", "方位詞：だ是濁音", "〜つ數法：注意促音", "濁音げ；另外兩個「〜気」是陷阱"]}, {"name": "もんだい2（表記）", "start": 13, "opts": 4, "key": [4, 3, 2, 1, 1, 4, 3, 2], "notes": ["片假名：ワ／ウ、ツ／ソ 的分辨", "自然名詞的漢字", "形近字：部首不同", "動詞的漢字", "い形容詞的漢字（反義詞是干擾）", "形近字：兩個字都要對", "動詞「說」的漢字", "時間詞：這個月／下個月／下週 的分辨"]}, {"name": "もんだい3（文脈規定）", "start": 21, "opts": 4, "key": [4, 4, 3, 1, 2, 1, 2, 3, 4, 1], "notes": ["樓層的量詞", "用刀子做的動作", "用來知道時間的東西", "「離車站近」的結果", "游泳的地方", "有不懂的字時對老師做的事", "房間熱時要開的東西", "在學校對漢字做的事", "加了很多糖的味道", "風的動詞"]}, {"name": "もんだい4（言い換え）", "start": 31, "opts": 4, "key": [2, 1, 3, 2, 4], "notes": ["親屬詞的同義說法", "形容詞的同義詞", "「洗衣服」的另一種說法", "形容詞＝反義詞的否定", "借出／借入：主語互換"]}]}, {"id": "g", "title": "文法・読解", "min": 50, "parts": [{"name": "もんだい1（文法形式）", "start": 1, "opts": 4, "key": [2, 4, 1, 4, 2, 3, 1, 3, 1, 2, 4, 3, 2, 4, 3, 1], "notes": ["交通手段的助詞", "舉例的「〜や〜など」", "離開的地點用を", "見面的對象用に", "動作主（誰做的）用が", "數量合計用で", "對比的は（昨天…今天…）", "な形容詞的連接用で", "場所指示詞＋に ある", "詢問感想的禮貌說法", "「開始了嗎」的否定回答", "「再來」的副詞", "ます形去ます＋ながら", "な形容詞的過去否定", "點東西：〜をください", "邀請：〜ませんか"]}, {"name": "もんだい2（★並べ替え）", "start": 17, "opts": 4, "key": [4, 2, 3, 2, 1], "notes": ["語順：名詞＋を＋方向＋に＋動詞", "語順：〜の〜と いっしょに", "語順：〜くて、〜が＋形容詞", "名詞修飾：〜に ある＋名詞", "名詞修飾：〜に もらった＋名詞"]}, {"name": "もんだい3（文章の文法）", "start": 22, "opts": 4, "key": [2, 1, 4, 3, 3], "notes": ["前後意思相反的接續詞", "向讀者提出請求", "敘述過去的事", "店名＋の＋名詞", "去做某事：ます形去ます＋に行きます"]}, {"name": "もんだい4（短文）", "start": 27, "opts": 4, "key": [3, 2, 1], "notes": ["注意「けさ」和平常的不同", "公告：哪一班停課、作業何時交", "便條：「〜前に」表示先做的事"]}, {"name": "もんだい5（中文）", "start": 30, "opts": 4, "key": [2, 3], "notes": ["找「早起的原因」：看前一段", "弄錯的是哪一件事：看最後一句"]}, {"name": "もんだい6（情報検索）", "start": 32, "opts": 4, "key": [4], "notes": ["先用金額上限刪去，再比時間"]}]}, {"id": "l", "title": "聴解", "min": 30, "parts": [{"name": "もんだい1（課題理解）", "start": 1, "opts": 4, "key": [3, 1, 4, 2, 1, 4, 3], "notes": ["聽路線：在哪裡轉、在什麼的隔壁", "兩個條件：哪種雜誌、幾月號", "假期到哪一天，下一天才是答案", "中途改了數量，還追加了東西", "用刪去法：哪幾天不行、哪天時間短", "問的是「午前」，午後的教室是陷阱", "要帶的是食物和另一樣東西，飲料不用"]}, {"name": "もんだい2（ポイント理解）", "start": 1, "opts": 4, "key": [4, 1, 3, 1, 2, 2], "notes": ["放了幾種水果，全部都算", "問的是哥哥的人數，孩子的人數是陷阱", "現在的方式，不是以前的", "兩個人「一起」做的事", "問的是哪一方的時間", "原本的店休息，改去哪裡"]}, {"name": "もんだい3（発話表現）", "start": 1, "opts": 3, "key": [3, 3, 1, 2, 2], "notes": ["提議一起做：〜ましょう", "請對方吃東西的說法", "想搭電梯時說的話", "提醒對方有危險", "催促還沒來的東西"]}, {"name": "もんだい4（即時応答）", "start": 1, "opts": 3, "key": [1, 3, 3, 2, 1, 2], "notes": ["問「いつ」→ 回答時間點", "問「もう〜ましたか」→ 還沒的回答", "問「どこで買いましたか」→ 其實是自己做的", "問「何時の」→ 回答幾點的", "問「知っていますか」→ 肯定的回答", "問「どこかへ」→ どこへも＋否定"]}]}];
-  var SHEET_KEY = "jpNotebookSheet2018";
-  function loadSheet(){ try { var o = JSON.parse(localStorage.getItem(SHEET_KEY) || "{}"); return (o && typeof o === "object") ? o : {}; } catch (e) { return {}; } }
-  var sheetOpen = false, sheetSec = 0, sheetGraded = false, sheetAns = loadSheet(), sheetEnd = 0, sheetTick = null;
-  function saveSheet(){ try { localStorage.setItem(SHEET_KEY, JSON.stringify(sheetAns)); } catch (e) {} }
-  function sheetScore(sec){
-    var c = 0, n = 0;
-    sec.parts.forEach(function(p, pi){ for (var i = 0; i < p.key.length; i++) { n++; if (sheetAns[sec.id + "-" + pi + "-" + i] === p.key[i]) c++; } });
-    return [c, n];
-  }
-  function renderSheet(){
-    var sec = SHEET[sheetSec];
-    var h = '<div class="quiz-feedback-row"><span class="quiz-q">公式問題集（2018）採点シート</span><button class="btn" id="sheetClose">回到選單</button></div>';
-    h += '<p class="count-note">題目請看你自己的 PDF 或紙本，這裡只作答、計時和對答案。作答會自動保存在這個瀏覽器。</p>';
-    h += '<div class="tagbar">' + SHEET.map(function(s2, i){ return '<button class="tag-chip' + (i === sheetSec ? ' active' : '') + '" data-ss="' + i + '">' + escapeHtml(s2.title) + '</button>'; }).join("") + '</div>';
-    h += '<div class="listen-controls"><button class="btn" id="sheetTimerBtn">⏱ 開始計時（' + sec.min + '分）</button><span id="sheetTimer" class="quiz-score-line"></span></div>';
-    if (sheetGraded) {
-      var v = sheetScore(SHEET[0]), g = sheetScore(SHEET[1]), l = sheetScore(SHEET[2]);
-      var gs = Math.round(120 * (v[0] + g[0]) / (v[1] + g[1])), ls = Math.round(60 * l[0] / l[1]), tot = gs + ls, pass = tot >= 80 && gs >= 38 && ls >= 19;
-      h += '<table class="verb-table"><tr><th>科目</th><th>答對</th><th>換算（估算）</th></tr>' +
-        '<tr><td>文字・語彙</td><td>' + v[0] + ' / ' + v[1] + '</td><td rowspan="2">' + gs + ' / 120</td></tr>' +
-        '<tr><td>文法・読解</td><td>' + g[0] + ' / ' + g[1] + '</td></tr>' +
-        '<tr><td>聴解</td><td>' + l[0] + ' / ' + l[1] + '</td><td>' + ls + ' / 60</td></tr></table>' +
-        '<p class="order-verdict ' + (pass ? 'ok' : 'ng') + '">' + (pass ? '◯ ' : '✗ ') + '總分約 ' + tot + ' / 180（合格 80，且兩科各達 38・19）</p>' +
-        '<p class="num-note">這是按答對比例的估算；正式考試用換算分數，結果會有出入。</p>';
-    }
-    sec.parts.forEach(function(p, pi){
-      h += '<h3 class="detail-h">' + escapeHtml(p.name) + '</h3>';
-      for (var i = 0; i < p.key.length; i++) {
-        var id = sec.id + "-" + pi + "-" + i, a = sheetAns[id];
-        h += '<div class="sheet-row"><span class="sheet-num">' + (p.start + i) + '</span><span class="sheet-opts">';
-        for (var o = 1; o <= p.opts; o++) {
-          var cls = "sheet-opt" + (a === o ? " sel" : "");
-          if (sheetGraded) { if (o === p.key[i]) cls += " right"; else if (a === o) cls += " wrong"; }
-          h += '<button class="' + cls + '" data-sid="' + id + '" data-o="' + o + '"' + (sheetGraded ? ' disabled' : '') + '>' + o + '</button>';
-        }
-        h += '</span>' + (sheetGraded ? '<span class="sheet-note">' + (a === p.key[i] ? '◯ ' : (a ? '✗ ' : '— ')) + escapeHtml(p.notes[i]) + '</span>' : '') + '</div>';
-      }
-    });
-    h += '<div class="start-row">' + (sheetGraded ? '<button class="btn" id="sheetBack">繼續作答</button> <button class="btn primary" id="sheetRedo">清除答案，重新作答</button>' : '<button class="btn primary" id="sheetGrade">採点する（對答案）</button>') + '</div>';
-    content.innerHTML = h;
-    document.getElementById("sheetClose").addEventListener("click", function(){ sheetOpen = false; renderQuiz(); });
-    content.querySelectorAll("[data-ss]").forEach(function(b){ b.addEventListener("click", function(){ sheetSec = parseInt(b.getAttribute("data-ss"), 10); renderSheet(); }); });
-    content.querySelectorAll("[data-sid]").forEach(function(b){
-      b.addEventListener("click", function(){
-        var id = b.getAttribute("data-sid"), o = parseInt(b.getAttribute("data-o"), 10);
-        if (sheetAns[id] === o) delete sheetAns[id]; else sheetAns[id] = o;
-        saveSheet();
-        content.querySelectorAll('[data-sid="' + id + '"]').forEach(function(x){ x.classList.toggle("sel", parseInt(x.getAttribute("data-o"), 10) === sheetAns[id]); });
-      });
-    });
-    var gb = document.getElementById("sheetGrade");
-    if (gb) gb.addEventListener("click", function(){ sheetGraded = true; renderSheet(); });
-    var bb = document.getElementById("sheetBack");
-    if (bb) bb.addEventListener("click", function(){ sheetGraded = false; renderSheet(); });
-    var rb = document.getElementById("sheetRedo");
-    if (rb) rb.addEventListener("click", function(){ if (confirm("清除這份試題的所有作答？")) { sheetAns = {}; saveSheet(); sheetGraded = false; renderSheet(); } });
-    document.getElementById("sheetTimerBtn").addEventListener("click", function(){
-      sheetEnd = Date.now() + sec.min * 60000;
-      if (sheetTick) clearInterval(sheetTick);
-      sheetTick = setInterval(function(){
-        var el = document.getElementById("sheetTimer");
-        if (!el) { clearInterval(sheetTick); sheetTick = null; return; }
-        var left = sheetEnd - Date.now();
-        el.textContent = left > 0 ? "剩 " + fmtTime(left) : "時間到";
-      }, 1000);
-    });
-  }
-
   // ---------- Quiz (JLPT-format trainer; all questions original) ----------
   var quizState = null;
   var QUIZ_FORMATS = [
     ["kanji","漢字読み","もじ・ごい 1"],["ortho","表記","もじ・ごい 2"],["fill","文脈規定","もじ・ごい 3"],["para","言い換え","もじ・ごい 4"],
     ["particle","助詞","ぶんぽう 1"],["gram","文法形式","ぶんぽう 1"],["star","★並べ替え","ぶんぽう 2"],["textg","文章の文法","ぶんぽう 3"],
     ["read","読解","どっかい"],["say","発話表現","ちょうかい 3"],["lconv","会話聴解","ちょうかい 1・2 (audio)"],["qr","即時応答","ちょうかい 4 (audio)"],
-    ["vocab","語彙","word meaning"],["verb","活用","verb forms"],["plain","普通形","polite → plain"],["order","文作り","build the sentence"],["conv","会話完成","dialogue"]
+    ["vocab","語彙","word meaning"],["verb","活用","verb forms"],["plain","普通形","polite → plain"],["order","文作り","build the sentence"],["conv","会話完成","dialogue"],["ant","反義語","opposite word"]
   ];
   var quizSel = {};
   QUIZ_FORMATS.forEach(function(f){ quizSel[f[0]] = true; });
@@ -3167,7 +3326,16 @@
     var d = pick(ORDER_DRILL);
     return {type: "order", key: "order:" + d[0].join(""), words: d[0], tiles: shuffleArr(d[0].map(function(w, i){ return {w: w, i: i}; })), picked: [], zh: d[1], missTxt: d[0].join("")};
   }
-  var MAKERS = {vocab: makeVocabQ, kanji: makeKanjiQ, ortho: makeOrthoQ, fill: makeFillQ, para: makeParaQ, particle: makeParticleQ, gram: makeGramQ, verb: makeVerbQ, plain: makePlainQ, star: makeStarQ, textg: makeTextgQ, read: makeReadQ, conv: makeConvQ, say: makeSayQ, qr: makeQRQ, lconv: makeLConvQ, order: makeOrderQ};
+  function makeAntQ(){
+    var pool = [];
+    ANT_PAIRS.forEach(function(p){ var a = findVocabBase(p[0]), b = findVocabBase(p[1]); if (a && b) { pool.push([a, b]); pool.push([b, a]); } });
+    if (pool.length < 4) return null;
+    var pr = pick(pool), a = pr[0], b = pr[1];
+    var bad = antList(a).concat([antBase(a.jp), antBase(b.jp)]), ds = [], g = 0;
+    while (ds.length < 3 && g++ < 120) { var o = pick(pool)[0]; if (bad.indexOf(antBase(o.jp)) === -1 && ds.indexOf(o.jp) === -1) ds.push(o.jp); }
+    return mcQ("ant", a.id, '<div class="quiz-jp">' + escapeHtml(a.jp) + ' ' + speakerBtn(speakTextFor(a)) + '</div><div class="quiz-reading">' + escapeHtml(a.reading || "") + ' · ' + escapeHtml(a.meaning) + '</div>' + qHead("反対の いみの ことばは どれですか。"), b.jp, ds, {optClass: "p-opts", speak: speakTextFor(b), missTxt: a.jp + " ⇄ " + b.jp});
+  }
+  var MAKERS = {vocab: makeVocabQ, kanji: makeKanjiQ, ortho: makeOrthoQ, fill: makeFillQ, para: makeParaQ, particle: makeParticleQ, gram: makeGramQ, verb: makeVerbQ, plain: makePlainQ, star: makeStarQ, textg: makeTextgQ, read: makeReadQ, conv: makeConvQ, say: makeSayQ, qr: makeQRQ, lconv: makeLConvQ, order: makeOrderQ, ant: makeAntQ};
 
   function newState(qs, mock){
     var st = {questions: qs, idx: 0, score: 0, answered: false, missed: [], mock: !!mock, t0: Date.now(), secScore: {G: 0, L: 0}, secTotal: {G: 0, L: 0}};
@@ -3204,16 +3372,12 @@
   }
 
   function renderQuiz(){
-    if (sheetOpen) { renderSheet(); return; }
     if (!quizState) {
       stopSpeech();
       var total = 0; MOCK_PLAN.forEach(function(p){ total += p[1]; });
       var html = '<div class="mock-card"><div class="pack-jp">模擬試験</div><div class="pack-en">JLPT N5 format · ' + total + ' 題 · 文字語彙 → 文法 → 読解 → 聴解</div>' +
         '<p class="pack-desc">題型與順序比照正式考試（文字・語彙 もんだい1〜4、文法 1〜3、読解、聴解）。題目全部是原創練習題，不是官方試題。結束後顯示各科得分與合格線估算。</p>' +
         '<button class="btn primary" id="startMock">開始模擬試験</button></div>';
-      html += '<div class="mock-card"><div class="pack-jp">公式問題集 採点シート</div><div class="pack-en">2018 official workbook · 91 題 · 作答、計時、對答案</div>' +
-        '<p class="pack-desc">搭配你自己的官方問題集 PDF 使用：題目看 PDF，在這裡作答；對完答案後，每一題會顯示這題在考什麼。</p>' +
-        '<button class="btn" id="openSheet">打開採点シート</button></div>';
       html += '<h3 class="detail-h">自由練習 <span class="detail-sub">勾選題型，每次 10 題</span></h3><div class="fmt-grid">';
       QUIZ_FORMATS.forEach(function(f){
         html += '<label class="fmt-opt"><input type="checkbox" data-fmt="' + f[0] + '"' + (quizSel[f[0]] ? ' checked' : '') + '><span><span class="fmt-jp">' + f[1] + '</span><br><span class="fmt-en">' + f[2] + '</span></span></label>';
@@ -3226,7 +3390,6 @@
       document.getElementById("selNone").addEventListener("click", function(){ QUIZ_FORMATS.forEach(function(f){ quizSel[f[0]] = false; }); renderQuiz(); });
       document.getElementById("startQuiz").addEventListener("click", function(){ quizState = buildMixedQuiz(10); renderQuiz(); });
       document.getElementById("startMock").addEventListener("click", function(){ quizState = buildMock(); startTick(); renderQuiz(); });
-      document.getElementById("openSheet").addEventListener("click", function(){ sheetOpen = true; renderQuiz(); });
       return;
     }
     var st = quizState;
@@ -3334,6 +3497,8 @@
       renderListening();
     } else if (activeTab === "verbs") {
       renderVerbs();
+    } else if (activeTab === "patterns") {
+      renderPatterns();
     } else if (activeTab === "particles") {
       renderParticles();
     } else if (activeTab === "flashcards") {
