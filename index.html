@@ -12,21 +12,26 @@
 <body>
 <div class="app">
   <header class="top">
-    <div class="top-row"><h1>日本語ノート</h1><span class="ver-line">v0.2.1, released 2026-11-15</span></div>
+    <div class="top-row"><h1>日本語ノート</h1><span class="ver-line">v0.3.1, released 2026-11-21</span></div>
     <p class="prof-line">Language proficiency: N5</p>
   </header>
 
-  <div class="tabs-wrap"><button class="tab-arrow" id="tabPrev" aria-label="Previous section">‹</button><nav class="tabs" id="tabs">
-    <button data-tab="vocab" class="active"><span class="jp">語彙</span>Vocabulary</button>
-    <button data-tab="phrase"><span class="jp">フレーズ</span>Phrases</button>
-    <button data-tab="grammar"><span class="jp">文法</span>Grammar</button>
-    <button data-tab="numbers"><span class="jp">数</span>Numbers</button>
-    <button data-tab="listening"><span class="jp">聴解</span>Listening</button>
-    <button data-tab="verbs"><span class="jp">活用</span>Verbs</button>
-    <button data-tab="particles"><span class="jp">助詞</span>Particles</button>
-    <button data-tab="flashcards"><span class="jp">カード</span>Flashcards</button>
-    <button data-tab="quiz"><span class="jp">クイズ</span>Quiz</button>
-  </nav><button class="tab-arrow" id="tabNext" aria-label="Next section">›</button></div>
+  <div class="tabs-wrap">
+    <div class="tab-arrows"><button class="tab-arrow" id="tabFirst" aria-label="First section">«</button><button class="tab-arrow" id="tabPrev" aria-label="Previous section">‹</button></div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="vocab" class="active"><span class="jp">語彙</span><span class="en">Vocabulary</span></button>
+      <button data-tab="phrase"><span class="jp">フレーズ</span><span class="en">Phrases</span></button>
+      <button data-tab="grammar"><span class="jp">文法</span><span class="en">Grammar</span></button>
+      <button data-tab="numbers"><span class="jp">数</span><span class="en">Numbers</span></button>
+      <button data-tab="listening"><span class="jp">聴解</span><span class="en">Listening</span></button>
+      <button data-tab="verbs"><span class="jp">活用</span><span class="en">Verbs</span></button>
+      <button data-tab="particles"><span class="jp">助詞</span><span class="en">Particles</span></button>
+      <button data-tab="patterns"><span class="jp">設問</span><span class="en">Questions</span></button>
+      <button data-tab="flashcards"><span class="jp">カード</span><span class="en">Flashcards</span></button>
+      <button data-tab="quiz"><span class="jp">クイズ</span><span class="en">Quiz</span></button>
+    </nav>
+    <div class="tab-arrows"><button class="tab-arrow" id="tabNext" aria-label="Next section">›</button><button class="tab-arrow" id="tabLast" aria-label="Last section">»</button></div>
+  </div>
 
   <main id="content"></main>
 
