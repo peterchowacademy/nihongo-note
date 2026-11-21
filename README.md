@@ -1,4 +1,4 @@
-# 日本語ノート — JLPT N5 Notebook (v0.3.1)
+# 日本語ノート — JLPT N5 Notebook (v0.3.2)
 
 A self-study notebook for JLPT N5: vocabulary, phrases and dialogues, grammar notes, number and counter tables,
 verb conjugation, particles, listening practice, question patterns from past papers, and a JLPT-format quiz with a mock exam.
