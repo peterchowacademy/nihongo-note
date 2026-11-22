@@ -1,4 +1,4 @@
-  :root {
+:root {
     --paper: #EAE6DA;
     --paper-card: #F4F1E6;
     --ink: #1F2430;
@@ -394,10 +394,11 @@
     gap: 16px;
     flex-wrap: wrap;
   }
-  footer.app-footer button {
+  footer.app-footer button,
+  footer.app-footer a {
     background: none; border: none; padding: 0;
     color: var(--ink-faint); text-decoration: underline;
-    cursor: pointer; font-size: 12px;
+    cursor: pointer; font-size: 12px; font-family: inherit;
   }
 
   /* Tag chips bar */

@@ -406,10 +406,12 @@
     gap: 16px;
     flex-wrap: wrap;
   }
-  footer.app-footer button {
+  footer.app-footer button,
+  footer.app-footer a,
+  footer.app-footer a:visited {
     background: none; border: none; padding: 0;
     color: var(--ink-faint); text-decoration: underline;
-    cursor: pointer; font-size: 12px;
+    cursor: pointer; font-size: 12px; font-family: inherit;
   }
 
   /* Tag chips bar */
@@ -666,8 +668,7 @@
   <footer class="app-footer">
     <span id="totalCount"></span>
     <button id="restoreBtn">Restore starter set</button>
-    <button id="resetEditsBtn">Undo my edits</button>
-    <button id="clearBtn">Clear all data</button>
+    <a href="mailto:peterchowacademy@gmail.com?subject=日本語ノート Feedback">Feedback to Takayoshi</a>
   </footer>
 </div>
 
