@@ -1064,7 +1064,7 @@
     html2 += '<div class="quiz-jp">' + escapeHtml(q.v[0]) + '</div><div class="quiz-reading">' + escapeHtml(q.v[1]) + ' · ' + escapeHtml(q.v[5]) + '</div>';
     html2 += '<p class="count-note">→ <strong>' + escapeHtml(fm[1]) + '</strong>（' + fm[2] + '）是什麼？</p><div class="quiz-options">';
     q.options.forEach(function(opt){ html2 += '<button class="quiz-opt" data-r="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '<span class="quiz-mark"></span></button>'; });
-    html2 += '</div><div id="vExplain"></div><div class="start-row" id="vNextWrap" style="display:none;"><button class="btn primary" id="vNext">下一題</button></div>';
+    html2 += '</div><div class="start-row" id="vNextWrap" style="display:none;"><button class="btn primary" id="vNext">下一題</button></div>';
     content.innerHTML = html2;
     var btns = content.querySelectorAll(".quiz-opt");
     btns.forEach(function(b){
@@ -1695,26 +1695,6 @@
     saveUserState();
     refreshEntries();
     render();
-  });
-  document.getElementById("resetEditsBtn").addEventListener("click", function(){
-    var n = Object.keys(userState.overrides || {}).length;
-    if (!n) { alert("You have no edits to undo."); return; }
-    if (confirm("Undo your " + n + " edit(s) to starter words and restore their original text and tags?")) {
-      userState.overrides = {};
-      saveUserState();
-      refreshEntries();
-      render();
-    }
-  });
-  document.getElementById("clearBtn").addEventListener("click", function(){
-    if (confirm("This removes everything you've added and restores the full starter set. Continue?")) {
-      userState = {added: [], deletedSeedIds: [], overrides: {}};
-      saveUserState();
-      refreshEntries();
-      fcState = { filter: "all", deck: [], pos: 0, flipped: false };
-      quizState = null;
-      render();
-    }
   });
 
   render();
